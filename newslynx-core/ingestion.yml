@@ -1,0 +1,21 @@
+- sh: "jq -c '.[]' /var/tmp/files/inn.json"
+  inputs:
+    - inn.json
+  apt:
+    - jq
+- script: "download.py"
+  init:
+    - "pip install git+https://github.com/stdbrouw/python-manta git+https://github.com/stdbrouw/askmanta"
+  dependencies:
+    python:
+      - requests
+      - feedparser
+      - tarjan
+      - askmanta
+- script: "analyze.py"
+  init:
+    - "pip install git+https://github.com/stdbrouw/python-manta git+https://github.com/stdbrouw/askmanta"
+  dependencies:
+    python:
+      - lxml
+      - readability-lxml
