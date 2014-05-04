@@ -133,7 +133,7 @@ class Article:
     """
     turn an Article object into a dict.
     """
-    return selt.__dict__
+    return self.__dict__
 
   def from_newspaper(self, np_article):
     """
