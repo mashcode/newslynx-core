@@ -11,6 +11,7 @@ from HTMLParser import HTMLParser
 import requests
 from cookielib import CookieJar as cj
 from lxml import etree
+
 from newslynx_core import settings 
 
 def get_request_kwargs(timeout, useragent):
@@ -83,5 +84,6 @@ def strip_tags(html):
   s = MLStripper()
   s.feed(html)
   raw_text = s.get_data()
-  raw_text = re.sub(r'\n|\t', ' ', raw_text)
+  raw_text = re.sub(r'\n|\t|\r', ' ', raw_text)
   return re.sub('\s+', ' ', raw_text).strip()
+

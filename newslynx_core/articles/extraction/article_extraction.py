@@ -14,10 +14,10 @@ from newslynx_core.articles.extraction.html import (
 from newslynx_core.articles.article import Article
 from newslynx_core import settings
 
-class ArticleExtractorInitializationError(Exception):
+class NewsLynxExtractorInitializationError(Exception):
   pass
 
-class ArticleExtractor:
+class NewsLynxExtractor:
   """
   multi-method article extraction framework for NewsLynx.
 
@@ -33,7 +33,7 @@ class ArticleExtractor:
   """
   def __init__(self, **kwargs):
     ## TK: more initialization settings 
-    self.np_config = newspaper.Config()
+    self._set_np_config()
     try:
       from goose import Goose 
     except ImportError:
@@ -53,10 +53,6 @@ class ArticleExtractor:
     a raw_html option, so we'll just pass in 
     the url.
 
-    NOTE: This is probably duplicitous since 
-    newspaper is just built off of python-goose's 
-    source code. 
-
     TODO: If we do use newspaper, we should abstract 
     out its parser rather than applying it's image / 
     metadata / video / title / author extraction methods 
@@ -70,6 +66,9 @@ class ArticleExtractor:
   def extract_goose(self, html):
     """
     Extract an article with goose.
+
+    NOTE: This is probably duplicitous since 
+    newspaper extends python-goose's source code. 
     """
     g_article = self.g.extract(raw_html = html)
     return g_article
@@ -101,17 +100,18 @@ class ArticleExtractor:
   def extract(self, **kwargs):
     """
     primary method for extraction, for now 
-    we're just wrapping newspaper's Article.build()
+    we're basically just wrapping newspaper's 
+    Article.build()
     """
     if 'url' not in kwargs:
       raise ArticleExtractorInitializationError(
         'extract requires a url!'
       )
+    # get the url 
+    url = kwargs.get('url')
     # initialize an Article object
     article = Article(url = url)
 
-    # get the url 
-    url = kwargs.get('url')
     # # TK extract html 
     # html = get_html(url)
 
@@ -133,8 +133,8 @@ class ArticleExtractor:
 if __name__ == '__main__':
   from pprint import pprint
   url = 'http://www.nytimes.com/2014/05/04/fashion/Jason-Patric-Does-Sperm-Donor-Mean-Dad-parental-rights.html'
-  a = ArticleExtractor()
-  article = a.extract(url=url)
-  pprint(article.to_json()['text'])
+  nl = NewsLynxExtractor()
+  article = nl.extract(url=url)
+  pprint(article.text)
 
 

@@ -125,9 +125,15 @@ class Article:
 
   def to_json(self):
     """
-    turn an article object into json.
+    turn an Article object into json.
     """
-    return jsonify(self.__dict__)
+    return jsonify(self.to_dict())
+
+  def to_dict(self):
+    """
+    turn an Article object into a dict.
+    """
+    return selt.__dict__
 
   def from_newspaper(self, np_article):
     """
@@ -171,3 +177,5 @@ class Article:
     if len(np_article.movies) > 0:
       for m in np_article.movies:
         self.movies.append(reconcile_embed_url(m))
+
+
