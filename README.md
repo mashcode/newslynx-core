@@ -1,4 +1,4 @@
-newslynx_core
+newslynx-core
 =============
 The core framework for populating newslynx's data store.
 
@@ -8,7 +8,7 @@ First, you must setup an account for [`manta`](http://www.joyent.com/products/ma
 * username: newslynx
 * password: manta-{{our_services_password}}
 
-Next, upload your ssh key, and then set these environmental variables.
+Next, upload your ssh key, and then set these environmental variables:
 ```
 export MANTA_URL=https://us-east.manta.joyent.com 
 export MANTA_USER=newslynx 
@@ -20,7 +20,7 @@ You might also want to install `manta`'s node cli:
 sudo npm install manta -g
 ```
 
-Now you should be able to install `newslynx_core` and it's core dependencies via:
+Now you should be able to install `newslynx-core` and it's core dependencies via:
 
 ```
 sudo pip install -r requirements.txt # why can't i incorporate this into setup.py ?
@@ -31,6 +31,7 @@ Or if you are responsible, first setup a virtual environment:
 
 ```
 mkvirtualenv newslynx-core
+pip install -r requirements.txt
 python setup.py install
 ```
 
