@@ -4,14 +4,12 @@
 from readability.readability import Document
 import newspaper
 import requests
-from pprint import pprint
-from lxml import etree 
 
 from newslynx_core.urls.parse_url import (
   prepare_url, get_domain
   )
 from newslynx_core.articles.extraction.html import (
-  get_html, strip_tags 
+  get_html, node_to_string
   )
 from newslynx_core.articles.article import Article
 from newslynx_core import settings
@@ -67,7 +65,7 @@ class ArticleExtractor:
     np_article = newspaper.Article(url = url, config=self.np_config)
     np_article.build()
     return np_article
-    # return np_article.article_html
+    # return node_to_string(np_article.top_node)
 
   def extract_goose(self, html):
     """
@@ -75,7 +73,7 @@ class ArticleExtractor:
     """
     g_article = self.g.extract(raw_html = html)
     return g_article
-    #return etree.tostring(g_article.top_node)
+    #return node_to_string(g_article.top_node)
 
   def extract_boilerpipe(self, html):
     """ 
@@ -109,6 +107,9 @@ class ArticleExtractor:
       raise ArticleExtractorInitializationError(
         'extract requires a url!'
       )
+    # initialize an Article object
+    article = Article(url = url)
+
     # get the url 
     url = kwargs.get('url')
     # # TK extract html 
@@ -117,19 +118,23 @@ class ArticleExtractor:
     # for now we're just using newspaper 
     np_article = self.extract_newspaper(url=url)
 
-    # initialize an Article object
-    article = Article(url = url)
-
-    # populate Article from newspaper Article 
+    # populate our Article from newspaper Article 
     article.from_newspaper(np_article)
 
     # return an Article object
     return article
 
+  def best_candidate(self, html):
+    """
+    TK: determine best candidate 
+    """
+    pass 
+
 if __name__ == '__main__':
+  from pprint import pprint
   url = 'http://www.nytimes.com/2014/05/04/fashion/Jason-Patric-Does-Sperm-Donor-Mean-Dad-parental-rights.html'
   a = ArticleExtractor()
   article = a.extract(url=url)
-  pprint(article.to_json())
+  pprint(article.to_json()['text'])
 
 

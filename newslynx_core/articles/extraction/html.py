@@ -8,7 +8,6 @@ github.com/codelucas/newspaper
 
 import re
 from HTMLParser import HTMLParser
-import logging
 import requests
 from cookielib import CookieJar as cj
 from lxml import etree

@@ -6,7 +6,8 @@ From: https://github.com/codelucas/newspaper/blob/master/newspaper/urls.py
 import re
 import logging 
 from urlparse import (
-    urlparse, urljoin, urlsplit, urlunsplit, parse_qs)
+    urlparse, urljoin, urlsplit, urlunsplit, parse_qs
+    )
 from slugify import slugify 
 from hashlib import sha1
 
