@@ -31,7 +31,7 @@ class Article:
   - hash
     * potentially used for naming/linking files in manta.
 
-  # Page Attributes 
+  # Page Attributes #
   - raw html
   - metadata
     * meta_keywords 
@@ -39,7 +39,7 @@ class Article:
     * meta_lang 
     * meta_favicon 
 
-  # Article Attributes
+  # Article Attributes #
   - title
     * passed in from RSS feed or article extraction.
   - authors
