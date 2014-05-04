@@ -23,7 +23,7 @@ abs_url_regex = re.compile(
 
 re_abs_url = re.compile(abs_url_regex)
 
-# remove https / http from url
+# remove https / http / .html from url for slugging / hashing
 re_http = re.compile(r'http(s)?')
 re_html = re.compile(r'(index\.)?htm(l)?$')
 
@@ -118,27 +118,27 @@ def is_abs_url(url):
     return (re_abs_url_regex.search(url) != None)
 
 def url_to_slug(url):
-    """
-    turn a url into a slug, removing http/https and .html 
-    """
-    url = re_http.sub('', url)
-    url = re_html.sub('', url)
-    return slugify(url)
+  """
+  turn a url into a slug, removing (index).html 
+  """
+  url = get_path(url)
+  url = re_html.sub('', url)
+  return slugify(url)
 
 def url_to_hash(url):
-    """
-    turn a url into a unique sha1 hash
-    """
-    url = re_http.sub('', url)
-    url = re_html.sub('', url)
-    return sha1(url).hexdigest()
+  """
+  turn a url into a unique sha1 hash
+  """
+  url = re_http.sub('', url)
+  url = re_html.sub('', url)
+  return sha1(url).hexdigest()
 
 def reconcile_embed_url(url):
-    """
-    make an embedded movie url like this:
-    //www.youtube.com/embed/vYNnPx8fZBs
-    into a full url
-    """
-    if url.startswith('//'):
-        url = "http%s" % url
-    return url
+  """
+  make an embedded movie url like this:
+  //www.youtube.com/embed/vYNnPx8fZBs
+  into a full url
+  """
+  if url.startswith('//'):
+      url = "http%s" % url
+  return url
