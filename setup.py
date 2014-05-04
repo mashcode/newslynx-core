@@ -1,14 +1,12 @@
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
-# parse_requirements() returns generator of pip.req.InstallRequirement objects
-install_reqs = [ 
-  str(ir.req) for ir in 
-  parse_requirements('requirements.txt')
-  ] 
+# install_reqs = [
+#   str(ir.req) for ir in parse_requirements('requirements.txt')
+#   ] 
 
 setup(
-  name='newslynx_code',
+  name='newslynx-core',
   version='0.0.1',
   description="",
   long_description="",
@@ -22,13 +20,13 @@ setup(
   keywords='',
   author='Brian Abelson, Stijn Debrouwere, Michael Keller',
   author_email='brian@newslynx.org, stijn@newslynx.org, michael@newslynx.org',
-  url='http://github.com/newslynx/newslynx_core',
+  url='http://github.com/newslynx/newslynx-core',
   license='MIT',
   packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
   namespace_packages=[],
   include_package_data=False,
   zip_safe=False,
-  install_requires=install_reqs,
+  install_requires=[],
   tests_require=[],
   entry_points={
   }

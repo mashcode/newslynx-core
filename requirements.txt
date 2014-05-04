@@ -1,0 +1,7 @@
+requests>=2.1.0
+python-slugify>=0.0.7
+lxml>=3.3.5
+feedparser>=5.1.3
+readability-lxml>=0.3.0.2
+newspaper==0.0.6
+git+https://github.com/stdbrouw/python-manta 
