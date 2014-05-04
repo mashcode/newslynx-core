@@ -20,10 +20,10 @@ def get_request_kwargs(timeout, useragent):
   are methods which need to be called every time we make a request.
   """
   return {
-      'headers' : {'User-Agent': useragent},
-      'cookies' : cj(),
-      'timeout' : timeout,
-      'allow_redirects' : True
+    'headers' : {'User-Agent': useragent},
+    'cookies' : cj(),
+    'timeout' : timeout,
+    'allow_redirects' : True
   }
 
 def get_html(url, response=None):
@@ -56,7 +56,7 @@ def get_html(url, response=None):
     return html
 
   except Exception, e:
-    log.debug('%s on %s' % (e, url))
+    print '%s on %s' % (e, url)
     return u''
 
 def node_to_string(node):
