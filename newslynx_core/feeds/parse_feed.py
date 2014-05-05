@@ -271,11 +271,10 @@ class FeedParser:
 
   def parse(self):
     entries = self.get_entries()
-    threads = []
     for e in entries:
       if e:
-        threads.append(gevent.spawn(self.parse_entry, e))
-    gevent.joinall(threads)
+        self.pool.spawn(self.parse_entry, e)
+    self.pool.join()
 
   # def parse(self):
   #   entries = self.get_entries()
