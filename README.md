@@ -23,13 +23,6 @@ sudo npm install manta -g
 Now you should be able to install `newslynx-core` and it's core dependencies via:
 
 ```
-sudo pip install -r requirements.txt # why can't i incorporate this into setup.py ?
-sudo python setup.py install
-```
-
-Or if you are responsible, first setup a virtual environment:
-
-```
 mkvirtualenv newslynx-core
 pip install -r requirements.txt
 python setup.py install
