@@ -6,6 +6,8 @@ import newspaper
 from newslynx_core.feeds.libs import feedfinder
 from newslynx_core.feeds.parse_feed import FeedParser
 from newslynx_core.extractors.extract_article import ArticleExtractor
+from newslynx_core.parsers.parse_url import get_simple_domain
+from newslynx_core import settings 
 
 class FeedBuilderInitError(Exception):
   pass
@@ -97,10 +99,10 @@ class FeedBuilder:
 
   def _update_article_urls(self, url):
     if self._dup_article_url(url):
-      return False
+      return True
     else:
       self._add_article_url(url)
-      return True
+      return False
   
   def _get_initial_feeds(self):
     for feed_url in list(self.feed_urls):
@@ -182,7 +184,12 @@ class FeedBuilder:
     """
     build the feed and stream results 
     """
-    for article in self._iter_methods():
+    for article in self._iter_methods(methods = methods):
       yield article
 
-
+if __name__ == '__main__':
+  fb = FeedBuilder(source_url='http://www.propublica.org/')
+  articles = fb.build()
+  for a in articles:
+    for aa in a:
+      print aa

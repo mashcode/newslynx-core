@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import gevent
 from gevent.pool import Pool
+import gevent.monkey
+gevent.monkey.patch_socket()
 
 from newslynx_core.articles.article import Article
 from newslynx_core.extractors.extract_article import ArticleExtractor
@@ -104,12 +106,12 @@ class FeedParser:
   def _dup_article(self, url):
     return (url in self.article_urls)
 
-  def _update_article_urls(self, url):
+  def _check_new_url(self, url):
     if not self._dup_article(url):
       self._add_article(url)
-      return True 
-    else:
       return False
+    else:
+      return True
 
   def get_candidates(self, obj, jsonpath):
     """
@@ -120,13 +122,16 @@ class FeedParser:
     candidates = set()
     for path in jsonpath:
       path_candidates = get_jsonpath(obj, path)
+
       if isinstance(path_candidates, list):
         for candidate in path_candidates:
           if candidate:
             candidates.add(candidate)
+
       elif isinstance(path_candidates, dict):
         for k in path_candidates.keys():
           candidates.add(candidate)
+
       elif isinstance(path_candidates, str):
         candidates.add(candidate)
 
@@ -228,12 +233,13 @@ class FeedParser:
     merge data with Article Extraction
     """
     url  = self.get_entry_url(entry)
-    dup  = self._update_article_urls(url)
+    dup  = self._check_new_url(url)
+
     if url and not dup:
-      #
+      gevent.sleep(0)
       # initialize an article object
       article = Article(url = url, source=self.source)
-
+      pprint(article)
       # get image
       img_urls, img_url, img, thumb = self.get_imgs( entry )
 
@@ -247,7 +253,7 @@ class FeedParser:
       article.set_img_urls(       img_urls )
       article.set_img(            img )
       article.set_thumb(          thumb )
-
+      
       # get article extraction and merge
       np_article = self.article_extract.extract( url=url )
       if np_article:
@@ -265,12 +271,13 @@ class FeedParser:
 
   def parse(self):
     entries = self.get_entries()
-    i = 1
-    tasks = []
+    threads = []
     for e in entries:
       if e:
-        tasks.append(gevent.spawn(self.parse_entry, e) ) 
-        i += 1
-    gevent.joinall(tasks)
-    print "Finished"
-    print "Fetched %d urls" % i
+        threads.append(gevent.spawn(self.parse_entry, e))
+    gevent.joinall(threads)
+
+  # def parse(self):
+  #   entries = self.get_entries()
+  #   tasks = [gevent.spawn(self.parse_entry, e) for e in entries if e]
+  #   gevent.joinall(tasks)
