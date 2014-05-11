@@ -122,14 +122,17 @@ class Source:
       # do it
       output = self.parser(task_id, item)
 
-      # submit output
-      self._table.insert(output)
+      # if it worked, send off data
+      if output:
+        
+        # submit output
+        self._table.insert(output)
 
-      # clock out
-      self._mailman(output)
+        # clock out
+        self._mailman(output)
 
-      # sleep
-      gevent.sleep(0)
+        # sleep
+        gevent.sleep(0)
 
   def _mailman(self, output):
 

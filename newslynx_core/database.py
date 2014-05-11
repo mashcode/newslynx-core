@@ -13,9 +13,9 @@ db = dataset.connect(settings.DATABASE_URL)
 
 #tables
 articles = db['articles']
+galerts = db['galerts']
 twitter = db['twitter']
 facebook = db['facebook']
-galerts = db['facebook']
 homepages = db['homepages']
 
 
@@ -52,6 +52,16 @@ def generate_schema():
   articles.create_column('keywords',         postgresql.ARRAY(String))
   articles.create_column('img_urls',         postgresql.ARRAY(String))
   articles.create_column('movies',           postgresql.ARRAY(String))
+
+
+  # GALERTS
+
+  galerts.create_column('galert_id',         String) 
+  galerts.create_column('feed_url',          String)       
+  galerts.create_column('url',               String)            
+  galerts.create_column('title',             String)           
+  galerts.create_column('summary',           String)         
+  galerts.create_column('datetime',          DateTime)
 
 
   # TODO #
