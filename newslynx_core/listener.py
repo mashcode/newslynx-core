@@ -34,5 +34,5 @@ class Listener(threading.Thread):
         self.work(item)
 
 if __name__ == '__main__':
-  client = Listener(['publicintegrity:articles'])
+  client = Listener(['articles'])
   client.start()

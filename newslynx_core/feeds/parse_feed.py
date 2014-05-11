@@ -4,7 +4,6 @@ import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
-gevent.monkey.patch_thread()
 
 from newslynx_core.articles.article import Article
 from newslynx_core.extractors.extract_article import ArticleExtractor
@@ -251,6 +250,19 @@ class FeedParser(Source):
     # return the first candidate:
     return candidates[0]
 
+  def poller(self):
+    """
+    parse feed and stream entries
+    """
+    f = feedparser.parse(self.feed_url)
+
+    # go latest to earliest, so when
+    # we output messages, they are
+    # ordered events 
+    entries = reversed(f.entries)
+    for entry in f.entries:
+      yield entry
+
   def parser(self, url, entry):
 
     """
@@ -294,14 +306,6 @@ class FeedParser(Source):
       article = article.from_newspaper( np_article, merge=True)
 
     return article.to_dict()
-
-  def poller(self):
-    """
-    parse feed and stream entries
-    """
-    f = feedparser.parse(self.feed_url)
-    for entry in f.entries:
-      yield entry
 
   def messenger(self, output):
     return {

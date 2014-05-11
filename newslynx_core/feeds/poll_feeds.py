@@ -2,7 +2,6 @@ import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
-gevent.monkey.patch_thread()
 
 from newslynx_core.feeds.parse_feed import FeedParser
 from newslynx_core.organizations import ORGANIZATIONS
