@@ -452,7 +452,6 @@ re_short_domains = re.compile(r"""
   (.*aka\.gr$)
   """, flags=re.VERBOSE)
 
-
 def is_short_url(url, regex=None, test="any"):
   """
   test url for short links,
