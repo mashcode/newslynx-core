@@ -6,9 +6,6 @@ gevent.monkey.patch_all()
 from newslynx_core.feeds.parse_feed import FeedParser
 from newslynx_core import ORGANIZATIONS
 
-from pprint import pprint
-
-
 class FeedPoller:
   def __init__(self, **kwargs):
     self.organizations = ORGANIZATIONS # TODO: hook up to database
@@ -17,7 +14,7 @@ class FeedPoller:
 
   def _feeder(self):
     for organization in self.organizations:
-      # TODO: Make these objects
+      #  TODO: Make these objects
       org_id = organization['org_id']
       feed_urls = organization['rss_feeds']
       domain = organization['homepage']
@@ -29,7 +26,11 @@ class FeedPoller:
     while not self.tasks.empty():
       assignment = self.tasks.get()
       feed_url, org_id, domain = assignment
-      fp = FeedParser(feed_url=feed_url, org_id=org_id, domain=domain)
+      fp = FeedParser(
+        feed_url=feed_url, 
+        org_id=org_id, 
+        domain=domain
+        )
       fp.run()
       gevent.sleep(0)
 
