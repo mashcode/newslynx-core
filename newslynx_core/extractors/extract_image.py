@@ -28,7 +28,7 @@ SPRITE_PENALTY = 10
 class ImageExtractor:
   """
   Class for Extracting Images 
-  Taken From Reddit Source Code
+  Adapted From Reddit Source Code
   """
   def __init__(self, **kwargs):
     self.referer     = kwargs.get('referer', None)

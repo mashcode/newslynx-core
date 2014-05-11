@@ -4,6 +4,8 @@
 from readability.readability import Document
 import newspaper
 import requests
+import logging 
+from retrying import retry 
 
 from newslynx_core.parsers.parse_url import (
   prepare_url, get_domain
@@ -13,6 +15,7 @@ from newslynx_core.parsers.parse_html import (
   )
 from newslynx_core.articles.article import Article
 from newslynx_core import settings
+
 
 class ArticleExtractorError(Exception):
   pass
@@ -44,13 +47,14 @@ class ArticleExtractor:
     else:
       self.g = Goose({'browser_user_agent': settings.USER_AGENT})
 
+  @retry(wait_random_min=100, wait_random_max=1000)
   def extract_newspaper(self, url, html=None):
     """
     Extract an article with newspaper.
     unfortunately the author did not include 
     a html option, so we'll hack it.
     """
-    np_article = newspaper.Article(url = self.url, config=self.np_config)
+    np_article = newspaper.Article(url = url, config=self.np_config)
     np_article.build()
     return np_article
     # return node_to_string(np_article.top_node)
@@ -102,19 +106,16 @@ class ArticleExtractor:
       )
       
     # get the url 
-    self.url = kwargs.get('url')
+    url = kwargs.get('url')
     
     # Initialize an Article object
-    article = Article(url = self.url)
+    article = Article(url = url)
     
-    # Get html 
-    html = get_html(article.url)
-
     # for now we're just using newspaper 
-    np_article = self.extract_newspaper(url=article.url)
+    np_article = self.extract_newspaper(url = article.url)
 
     # populate our Article from newspaper Article 
-    article.from_newspaper(np_article)
+    article = article.from_newspaper(np_article)
 
     # return an Article object
     return article

@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import gevent
-from gevent.pool import Pool
+from gevent.queue import Queue
 import gevent.monkey
-gevent.monkey.patch_socket()
+gevent.monkey.patch_all()
 
 from newslynx_core.articles.article import Article
 from newslynx_core.extractors.extract_article import ArticleExtractor
 from newslynx_core.extractors.extract_image import ImageExtractor
 from newslynx_core.extractors.extract_author import AuthorExtractor
+from newslynx_core.extractors.extract_url import URLExtractor
 from newslynx_core.feeds.libs import feedparser
 from newslynx_core.parsers.parse_jsonpath import get_jsonpath
 from newslynx_core.parsers.parse_html import strip_tags
@@ -32,16 +33,22 @@ DATE_CANDIDATE_JSONPATH = [
 ]
 
 AUTHOR_CANDIDATE_JSONPATH = [
-  'author', 'author_detail.name'
+  'author', 'author_detail.name', 'authors[*].name'
 ]
 
 IMG_CANDIDATE_JSONPATH = [
   'media_content[*].url'
 ]
 
-TAG_CANDIDATE_TEMS = [
-  ''
+CONTENT_CANDIDATE_JSONPATH = [
+  'content[*].value', 'summary'
 ]
+
+TAG_CANDIDATE_JSONPATH = [
+  'tags[*].label', 'tags[*].term'
+]
+
+f = open('feeds.json', 'wb')
 
 class CandidateParserError(Exception):
   pass
@@ -78,7 +85,9 @@ class FeedParser:
       )
     
     # kwargs
+    self.org_id          = kwargs.get('org_id', None)
     self.feed_url        = kwargs.get('feed_url')
+    self.domain          = kwargs.get('domain')
     self.source          = kwargs.get('source', None)
     self.entry_urls      = kwargs.get('entry_urls', None)
     self.good_regex      = kwargs.get('good_regex', None)
@@ -93,11 +102,14 @@ class FeedParser:
     self.image_extract   = ImageExtractor(referer = self.feed_url)
     self.article_extract = ArticleExtractor()
     self.author_extract  = AuthorExtractor()
+    self.url_extract     = URLExtractor(domain = self.domain)
         
     # article urls we've already seen
     self.article_urls    = set()
 
-    self.pool = Pool(settings.GEVENT_POOL_SIZE)
+    # gevent
+    self.tasks = Queue()
+    self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
 
   # check / update url
   def _add_article(self, url):
@@ -145,9 +157,19 @@ class FeedParser:
     2: Open / Unshorten candidates
     3: If still none, default to first candidate
     """
-    # defaults to id / orig_link
-    if 'id' in entry:                  return prepare_url(entry.id)
-    if 'feedburner_origlink' in entry: return prepare_url(entry.feedburner_origlink)
+    # defaults to orig_link -> id -> link
+    # only if valid
+    if 'feedburner_origlink' in entry: 
+      if valid_url(entry.feedburner_origlink):
+        return prepare_url(entry.feedburner_origlink)
+  
+    if 'link' in entry:
+      if valid_url(entry.link):
+        return prepare_url(entry.link)
+
+    if 'id' in entry:
+      if valid_url(entry.id):                  
+        return prepare_url(entry.id)
 
     # get potential candidates
     candidates = self.get_candidates(entry, URL_CANDIDATE_JSONPATH)
@@ -207,23 +229,36 @@ class FeedParser:
 
     return list(authors)
 
-
   def get_imgs(self, entry):
     img_urls = self.get_candidates(entry, IMG_CANDIDATE_JSONPATH)
     img_url, img, thumb = self.image_extract.get_top_img(img_urls)
     return img_urls, img_url, img, thumb
   
-
   def get_article_html(self, entry):
-    return entry['summary']
-
+    """
+    Get all article text candidates and check which one is the longest.
+    """
+    candidates = self.get_candidates(entry, CONTENT_CANDIDATE_JSONPATH)
+    candidates.sort(key = len)
+    return candidates[-1]
   
-  def get_text(self, entry):
-    return strip_tags(entry['summary'])
+  def get_tags(self, entry):
+    tags = set()
+    _tags = self.get_candidates(entry, TAG_CANDIDATE_JSONPATH)
+    for _t in _tags:
+      tags.add(_t)
 
+    return list(tags)
+
+  def get_text(self, article_html):
+    return strip_tags(article_html)
   
   def get_title(self, entry):
     return entry['title']
+
+  def get_urls(self, article_html):
+    return self.url_extract.extract(html = article_html)
+
 
   def parse_entry(self, e):
 
@@ -236,17 +271,28 @@ class FeedParser:
     dup  = self._check_new_url(url)
 
     if url and not dup:
-      gevent.sleep(0)
+
       # initialize an article object
       article = Article(url = url, source=self.source)
-      pprint(article)
+      
       # get image
       img_urls, img_url, img, thumb = self.get_imgs( entry )
 
-      # get values
-      article.set_title(          self.get_title( entry ) )
-      article.set_article_html(   self.get_article_html( entry ) )
-      article.set_text(           self.get_text( entry ) )
+      # get html
+      article_html = self.get_article_html( entry )
+
+      int_links, ext_links = self.get_urls(article_html)
+
+      # get title
+      title = self.get_title( entry )
+      
+      # set values 
+      article.set_article_html(   article_html )
+      article.set_text(           self.get_text( article_html ) )
+      article.set_title(          title)
+      article.set_int_links(      int_links)
+      article.set_ext_links(      ext_links)
+      article.set_tags(           self.get_tags( entry ) )
       article.set_authors(        self.get_authors( entry ) )
       article.set_dates(          self.get_date( entry ) )
       article.set_updated(        updated_at )
@@ -255,28 +301,40 @@ class FeedParser:
       article.set_thumb(          thumb )
       
       # get article extraction and merge
-      np_article = self.article_extract.extract( url=url )
-      if np_article:
-        article.from_newspaper( np_article, merge=True) 
-        print article.url
+      np_article = self.article_extract.extract( url = url )
 
+      if np_article:
+        article = article.from_newspaper( np_article, merge=True)
+        f.write(article.to_json() + "\n")
+      else:
+        f.write(article.to_json() + "\n")
+        
+  
   def get_entries(self):
     """
     parse feed and stream unique records
     """
     f = feedparser.parse(self.feed_url)
+
     updated_at = self.get_date(f)
     for entry in f.entries:
-      yield entry, updated_at
+      self.tasks.put_nowait((entry, updated_at))
 
   def parse(self):
-    entries = self.get_entries()
-    for e in entries:
-      if e:
-        self.pool.spawn(self.parse_entry, e)
-    self.pool.join()
+    while not self.tasks.empty():
+      item = self.tasks.get()
+      self.parse_entry(item)
+      gevent.sleep(0)
 
-  # def parse(self):
-  #   entries = self.get_entries()
-  #   tasks = [gevent.spawn(self.parse_entry, e) for e in entries if e]
-  #   gevent.joinall(tasks)
+  def run(self):
+    gevent.spawn(self.get_entries).join()
+    gevent.joinall([
+        gevent.spawn(self.parse) 
+          for w in xrange(self.num_workers)
+    ])
+
+
+if __name__ == '__main__':
+  feed_url = 'http://rss.nytimes.com/services/xml/rss/nyt/Science.xml'
+  fp = FeedParser(feed_url = feed_url, source = 'http://www.nytimes.com/')
+  fp.run()

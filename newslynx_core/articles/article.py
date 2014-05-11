@@ -114,12 +114,13 @@ class Article:
     # self.tags = []
 
     # article-level attributes 
-    self.title             = u''
+    self.title             = None
     self.authors           = set()
     self.pub_datetime      = None
     self.pub_date          = None 
-    # self.local_pub_datetime = None 
-    # self.local_pub_date = None 
+    self.int_links         = set() 
+    self.ext_links         = set() 
+    self.tags              = set()
     self.keywords          = set()  # keywords extracted via nlp from the body text 
     self.img               = None
     self.image             = None
@@ -155,7 +156,7 @@ class Article:
     self.set_meta_favicon(      np_article.meta_favicon )
     self.set_keywords(          np_article.keywords )
     self.set_movies(            np_article.movies )
-
+    
     # try to get images
     img = None
     try:
@@ -178,7 +179,7 @@ class Article:
     if merge:
 
       # update if extracted text is longer
-      if len(self.text) < np_article.text:
+      if len(self.text) < len(np_article.text):
 
         self.set_text(          np_article.text )
         self.set_article_html(  np_article.article_html )
@@ -192,12 +193,11 @@ class Article:
       self.set_text(            np_article.text )
       self.set_article_html(    np_article.article_html )
       self.set_img(             np_article.top_img )
-
-    return self
     
+    return self
 
-  def set_url(self, title):
-    self.title = title 
+  def set_url(self, url):
+    self.url = url
 
   def set_title(self, title):
     self.title = title 
@@ -210,6 +210,18 @@ class Article:
 
   def set_text(self, text):
     self.text = text 
+
+  def set_int_links(self, links):
+    for l in links:
+      self.int_links.add(l)
+
+  def set_ext_links(self, links):
+    for l in links:
+      self.ext_links.add(l)
+
+  def set_tags(self, tags):
+    for t in tags:
+      self.tags.add(t)
 
   def set_dates(self, dt):
     if dt:

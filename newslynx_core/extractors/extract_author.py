@@ -108,7 +108,7 @@ class AuthorExtractor:
 
       # if we're at a delimiter, check if the name is complete
       if token.lower() in self.DELIM:
-        print token
+
         # check valid name based on initial count
         if self.end_name(curname):
           _authors.append(' '.join(curname))

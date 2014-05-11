@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import gevent
+from gevent.pool import Pool
+import gevent.monkey
+gevent.monkey.patch_socket()
 
 import newspaper
 
@@ -63,6 +67,8 @@ class FeedBuilder:
 
     # article urls we've already seen
     self.article_urls = set()
+
+    self.pool = Pool(setting.GEVENT_POOL_SIZE)
 
   # utility for initlizing a feed.
   def _init_feed_parser(self, feed_url):
@@ -132,60 +138,22 @@ class FeedBuilder:
       if self._update_article_urls(article_url):
         yield article
 
-  def _pool_feeds(self):
-    """
-    TO DO: gevent integration
-    There must be a more elegant 
-    way of doing all this generating / 
-    updating.
-    """
-    tasks = [
-      self._get_initial_feeds(),
-      self._get_category_feeds()
-    ]
-    for task in tasks:
-      for feed in task:
-        articles = self._parse_feed(feed_url)
-        for article in articles:
-          yield article
+  def articles_from_feedfinder(self):
+    feed_urls = self._get_category_feeds()
+    for feed_url in feed_urls:
+      articles = self._parse_feed(feed)
+      for article in articles:
+        yield article
 
-  def from_feedfinder(self):
-    pool = self._pool_feeds()
-    for article in pool:
-      yield article
-
-  def _pool_urls(self):
-    for article in np_source.article_urls:
-      url = article.url
+  def articles_from_homepage(self):
+    for url in np_source.article_urls:
       if simple_domain in url:
         if self._update_article_urls(url):
-          yield url
+          article =  self.article_extractor(url=url)
+          print article.url
 
-  def from_homepage(self):
-    for url in self._pool_urls():
-      article =  self.article_extractor(url=url)
-      yield article
 
-  def _iter_methods(self, methods):
-    
-    for m in methods:
 
-      # fun via feed finder
-      if m == 'feedfinder':
-        for article in self.from_feedfinder():
-          yield article
-
-      # run via newspaper
-      elif m == 'newspaper':
-        for article in self.from_newspaper():
-          yield article
-
-  def build(self, methods = ['feedfinder', 'homepage']):
-    """
-    build the feed and stream results 
-    """
-    for article in self._iter_methods(methods = methods):
-      yield article
 
 if __name__ == '__main__':
   fb = FeedBuilder(source_url='http://www.propublica.org/')

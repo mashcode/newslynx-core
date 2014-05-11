@@ -16,9 +16,10 @@ from urlparse import (
   urlparse, urljoin, urlsplit, urlunsplit, parse_qs
   )
 
-# date regex for url matching.
 from newslynx_core.parsers.parse_date import date_regex
-from newslynx_core.parsers.parse_re import match_regexes
+from newslynx_core.parsers.parse_re import (
+  match_regexes
+  )
 
 from newslynx_core import settings
 
@@ -50,7 +51,7 @@ BAD_DOMAINS = [
 # REGEX # 
 
 # this regex was brought to you by django!
-abs_url_regex = re.compile(r"""
+re_abs_url = re.compile(r"""
   ^(?:http|ftp)s?://                                                                 # http:// or https://
   (?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|  # domain...
   localhost|                                                                         # localhost...
@@ -143,7 +144,6 @@ def get_simple_domain(url):
   ```
   """
   domain = get_domain(url)
-  domain = re_www.sub('', domain)
   tld_dat = tldextract.extract(domain)
   return tld_dat.domain
 
@@ -169,7 +169,7 @@ def is_abs_url(url):
   """
   check if a url is absolute.
   """
-  return (re_abs_url_regex.search(url.lower()) != None)
+  return (re_abs_url.search(url.lower()) != None)
 
 def url_to_slug(url):
   """
@@ -181,10 +181,6 @@ def url_to_slug(url):
   url = re_slug.sub(r'-', url)
   url = re_slug_end.sub('', url)
 
-  # replce section names
-  for word in GOOD_PATHS:
-    url = url.replace(word, '')
-    
   if url.startswith('-'):
     url = url[1:]
   elif url.endswith('-'):
@@ -386,15 +382,6 @@ def valid_url(
 
   if verbose: print '%s caught for default false' % url
   return False
-
-from newslynx_core.parsers.parse_re import (
-  match_regexes
-  )
-from newslynx_core.parsers.parse_url import (
-  prepare_url, get_domain
-)
-
-
 
 # SHORT DOMAINS #
 
