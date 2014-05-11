@@ -73,7 +73,6 @@ class GAlertParser(Source):
   def parser(self, task_id, item):
     data = {}
     link = self.parse_link(item)
-    print link
     if link:
       data['galert_id'] = task_id
       data['feed_url'] = self.feed_url
