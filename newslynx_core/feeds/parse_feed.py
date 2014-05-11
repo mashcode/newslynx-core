@@ -49,7 +49,7 @@ TAG_CANDIDATE_JSONPATH = [
   'tags[*].label', 'tags[*].term'
 ]
 
-f = open('feeds.json', 'wb')
+
 
 class CandidateParserError(Exception):
   pass

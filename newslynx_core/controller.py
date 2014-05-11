@@ -25,7 +25,7 @@ class Controller:
     
 
   def _build_key(self):
-    return "%s-%s" % (self.org_id, self.source_type)
+    return "%s:%s" % (self.org_id, self.source_type)
 
   def _now(self):
     return float(current_timestamp())
