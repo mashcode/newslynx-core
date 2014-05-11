@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from newslynx_core.utils.serialization import jsonify
+from newslynx_core.parsers.serialization import jsonify
 from newslynx_core.parsers.parse_url import (
   prepare_url, get_domain, url_to_slug, url_to_hash, 
   reconcile_embed_url, get_simple_domain
@@ -103,9 +103,6 @@ class Article:
     self.slug               = url_to_slug(self.url)
     self.hash               = url_to_hash(self.url)
     
-    # page-level attributes 
-    self.page_html          = None
-
     # metadata
     self.meta_keywords      = set()
     self.meta_description   = None
@@ -200,9 +197,6 @@ class Article:
 
   def set_title(self, title):
     self.title = title 
-
-  def set_page_html(self, page_html):
-    self.page_html = page_html
 
   def set_article_html(self, article_html):
     self.article_html = article_html

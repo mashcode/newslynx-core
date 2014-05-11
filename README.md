@@ -20,6 +20,38 @@ pip install git+https://github.com/grangier/python-goose.git
 pip install boilerpipe
 ```
 
+## TODO
+ - [x] Utilities for parsing various things.
+ - [x] Utilities for extracting Articles
+ - [x] Utilities for extracting URLs
+ - [x] Utilites for extracing Images
+ - [x] Utilites for extracing Authors
+ - [x] Article Extraction
+ - [ ] `newslynx_core.database.db`. 
+  * The `dataset` object and explicit **postgresql** schema definitions for each source table. 
+ - [x] `newslynx_core.controller.Controller`
+  * A **redis** controller for Sources.
+  * contains methods for de-duplication, messaging, and flushing
+ - [x] `newslnyx_core.source.Source`
+  * An abstract class for grabbing data from any source.
+  * For each source, inherit this class and overwrite `.task_id()`, `poller`, `parser`, and `messenger`.
+  * this process will run on **gevent** queues, checking for duplicates via `Controller`,
+    and inserting new records into `db`
+ - [ ] `newlynx_core.poll.Poll`
+  * An abstract class for Polling multiple sources
+  * Uses `Contoller` to determine what to poll when.
+ - [x] `FeedParser`
+ - [ ] `GAlert`
+ - [ ] `Facebook`
+   * parsing facebook posts
+ - [ ] `Twitter`
+   * search twitter
+   * build lists
+   * parse lists
+   * parse users
+   * reading from streaming API (one set method, polls all org domains and shortlinks and checks for valid urls)
+- [ ] `Homepage`, detect what aritcle links are on each organization's homepage, when.
+
 ## Framework:
 
 Data will be polled from various sources using this basic straegy:

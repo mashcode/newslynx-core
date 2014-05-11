@@ -12,10 +12,14 @@ import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
+gevent.monkey.patch_thread()
 
 from newslynx_core.controller import Controller
 from newslynx_core.database import db
 from newslynx_core import settings
+
+class SourceInitError(Exception):
+  pass
 
 class Source:
   """
@@ -26,6 +30,15 @@ class Source:
     - source_id
   """
   def __init__(self, **kwargs):
+
+    if 'org_id' not in kwargs or \
+       'source_type' not in kwargs:
+
+      raise SourceInitError(
+        'FeedParser requires a feed_url, org_id, and domain'
+        'in order to run.'
+      )
+      
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)

@@ -4,6 +4,7 @@ import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
+gevent.monkey.patch_thread()
 
 from newslynx_core.articles.article import Article
 from newslynx_core.extractors.extract_article import ArticleExtractor
@@ -48,7 +49,6 @@ CONTENT_CANDIDATE_JSONPATH = [
 TAG_CANDIDATE_JSONPATH = [
   'tags[*].label', 'tags[*].term'
 ]
-
 
 
 class CandidateParserError(Exception):

@@ -4,7 +4,7 @@
 """
 A class for controlling and keeping track of pollers
 """
-
+import sys
 import redis
 
 from newslynx_core import settings
@@ -35,7 +35,27 @@ class Controller:
 
   def add(self, task_id):
     self.rdb.sadd(self.key, task_id)
-    # self.rdb.zadd(self.key, self._now(), task_id)
+    # TODO: get sorted sets working
+    # self.rdb.zadd(self.key, self._now(), task_id) 
 
   def pub(self, data):
     self.rdb.publish(self.key, jsonify(data))
+
+
+def lskeys():
+  c = Controller(org_id = "", source_type = "")
+  for k in c.rdb.keys():
+    print k
+
+def flushall():
+  c = Controller(org_id = "", source_type = "")
+  for k in c.rdb.keys():
+    c.rdb.delete(k)
+
+if __name__ == '__main__':
+  if len(sys.argv) > 0:
+    task = sys.argv[1]
+    if task == "flushall":
+      flushall()
+    elif task == "lskeys":
+      lskeys()

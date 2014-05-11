@@ -15,7 +15,7 @@ USER_AGENT = "NewsLynx | (Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWe
 REQUEST_TIMEOUT = 15
 
 # POSTGRESQL
-DATABASE_URL = 'postgresql://brian:brian@localhost:5432/newslynx_core'
+DATABASE_URL = 'postgresql://brian:brian@localhost:5432/nl'
 
 # SET EXPIRATION
 SET_EXPIRES = timedelta(days=30)

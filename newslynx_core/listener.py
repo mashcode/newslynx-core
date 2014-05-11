@@ -10,7 +10,6 @@ An example of a pubsub listener, for testing. Will be folded into
 
 import redis 
 import threading
- 
 
 from newslynx_core.controller import pool
 from newslynx_core import settings 
