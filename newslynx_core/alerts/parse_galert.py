@@ -43,11 +43,12 @@ class GAlertParser(Source):
 
   # HELPERS # 
   def parse_link(self, entry):
-    print entry
-    internal = False
     raw_link = self.re_ga_link.sub('', entry.link)
+    if '&ct=ga' in raw_link:
+      raw_link = raw_link.split('&ct=ga')[0]
     link = prepare_url(raw_link)
-    return link
+    if self.domain not in link:
+      return link
 
   def parse_title(self, entry):
     return strip_tags(entry.title)
