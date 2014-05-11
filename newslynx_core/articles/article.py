@@ -87,14 +87,14 @@ class Article:
     Eventually, we'll probably want to pass in 
     some global NewsLynx attributes as well.
     """
-    if 'url' not in kwargs:
+    if 'url' not in kwargs or 'org_id' not in kwargs:
       raise ArticleInitError(
         'An Article object must be initilized'
-        'with an url!'
+        'with an url or org_id!'
       )
 
     # TK newslynx-level attributes 
-    self.source_id          = kwargs.get('source_id', None)
+    self.org_id          = kwargs.get('org_id')
 
     # url-based attributes 
     self.url                = prepare_url(kwargs.get('url'))
@@ -123,7 +123,6 @@ class Article:
     self.tags              = set()
     self.keywords          = set()  # keywords extracted via nlp from the body text 
     self.img               = None
-    self.image             = None
     self.img_urls          = set() # all image urls
     self.thumb             = None
     self.movies            = set() # youtube, vimeo, etc
@@ -227,11 +226,6 @@ class Article:
     if dt:
       self.pub_date = dt.date()
       self.pub_datetime = dt 
-
-  def set_updated(self, dt):
-    if dt:
-      self.updated_dateime = dt 
-      self.updated_date = dt.date()
 
   def set_img_urls(self, img_urls):
     if img_urls:

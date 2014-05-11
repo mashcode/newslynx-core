@@ -40,8 +40,11 @@ def current_local_datetime(tz):
   # utc_now
   dt = datetime.now()
   return dt.replace(tzinfo=local_tz)
-  # localize
-  return localize_datetime(dt)
+  # # localize
+  # return localize_datetime(dt)
+
+def current_timestamp():
+  return int(datetime.now().strftime('%s'))
 
 def localize_datetime(dt):
   """

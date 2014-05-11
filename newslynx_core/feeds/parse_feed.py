@@ -20,6 +20,7 @@ from newslynx_core.parsers.parse_url import (
   prepare_url, unshorten_url, valid_url
   )
 from newslynx_core import settings
+from newslynx_core.source import Source 
 
 from pprint import pprint 
 
@@ -59,7 +60,7 @@ class FeedParserInitError(Exception):
 class FeedParserError(Exception):
   pass
 
-class FeedParser:
+class FeedParser(Source):
   """
   Strategy: 
   Use feedparser to extract / standardize feeds.
@@ -79,21 +80,28 @@ class FeedParser:
   
   def __init__(self, **kwargs):
 
-    if 'feed_url' not in kwargs:
+    if 'feed_url' not in kwargs or \
+        'org_id' not in kwargs or \
+        'domain' not in kwargs:
       raise FeedParserInitError(
-        'FeedParser requires a feed_url.'
+        'FeedParser requires a feed_url, org_id, and domain'
+        'in order to run.'
       )
+
+    Source.__init__(
+      self, 
+      org_id = kwargs.get('org_id'),
+      source_type = 'articles'
+    )
     
-    # kwargs
-    self.org_id          = kwargs.get('org_id', None)
+    # required kwargs
     self.feed_url        = kwargs.get('feed_url')
     self.domain          = kwargs.get('domain')
-    self.source          = kwargs.get('source', None)
-    self.entry_urls      = kwargs.get('entry_urls', None)
+
+    # optional kwargs
     self.good_regex      = kwargs.get('good_regex', None)
     self.bad_regex       = kwargs.get('bad_regex', None)
     self.short_regex     = kwargs.get('short_regex', None)
-    self.max_entries     = kwargs.get('max_entries', settings.MAX_FEED_ENTRIES)
     self.is_complete     = kwargs.get('is_complete', False)
     self.is_full_text    = kwargs.get('is_full_text', False)
     self.timezone        = kwargs.get('timezone', settings.LOCAL_TZ)
@@ -104,26 +112,10 @@ class FeedParser:
     self.author_extract  = AuthorExtractor()
     self.url_extract     = URLExtractor(domain = self.domain)
         
-    # article urls we've already seen
-    self.article_urls    = set()
-
     # gevent
     self.tasks = Queue()
-    self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
 
-  # check / update url
-  def _add_article(self, url):
-    self.article_urls.add(url)
-
-  def _dup_article(self, url):
-    return (url in self.article_urls)
-
-  def _check_new_url(self, url):
-    if not self._dup_article(url):
-      self._add_article(url)
-      return False
-    else:
-      return True
+  # HELPERS #
 
   def get_candidates(self, obj, jsonpath):
     """
@@ -150,7 +142,64 @@ class FeedParser:
     return list(candidates)
 
 
-  def get_entry_url(self, entry):
+  def get_date(self, obj):
+    """
+    return earliest time of candidates or current time.
+    """
+    candidates = self.get_candidates(obj, DATE_CANDIDATE_JSONPATH)
+    if len(candidates) > 0:
+      return time_to_datetime(sorted(candidates)[0])
+    else:
+      return current_local_datetime(self.timezone)
+
+  
+  def get_authors(self, entry):
+    """
+    return all candidates, and parse unique
+    """
+    
+    authors = set()
+    
+    _authors = self.get_candidates(entry, AUTHOR_CANDIDATE_JSONPATH)
+    for _a in _authors:
+      for author in self.author_extract.from_string(_a):
+        authors.add(author)
+
+    return list(authors)
+
+  def get_imgs(self, entry):
+    img_urls = self.get_candidates(entry, IMG_CANDIDATE_JSONPATH)
+    img_url, img, thumb = self.image_extract.get_top_img(img_urls)
+    return img_urls, img_url, img, thumb
+  
+  def get_article_html(self, entry):
+    """
+    Get all article text candidates and check which one is the longest.
+    """
+    candidates = self.get_candidates(entry, CONTENT_CANDIDATE_JSONPATH)
+    candidates.sort(key = len)
+    return candidates[-1]
+  
+  def get_tags(self, entry):
+    tags = set()
+    _tags = self.get_candidates(entry, TAG_CANDIDATE_JSONPATH)
+    for _t in _tags:
+      tags.add(_t)
+
+    return list(tags)
+
+  def get_text(self, article_html):
+    return strip_tags(article_html)
+  
+  def get_title(self, entry):
+    return entry['title']
+
+  def get_urls(self, article_html):
+    return self.url_extract.extract(html = article_html)
+
+  # CORE #
+
+  def task_id(self, entry):
     """
     Two strategies:
     1: check candidates for valid urls
@@ -202,139 +251,65 @@ class FeedParser:
     # return the first candidate:
     return candidates[0]
 
+  def parser(self, url, entry):
 
-  def get_date(self, obj):
     """
-    return earliest time of candidates or current time.
-    """
-    candidates = self.get_candidates(obj, DATE_CANDIDATE_JSONPATH)
-    if len(candidates) > 0:
-      return time_to_datetime(sorted(candidates)[0])
-
-    else:
-      return current_local_datetime(self.timezone)
-
-  
-  def get_authors(self, entry):
-    """
-    return all candidates, and parse unique
-    """
-    
-    authors = set()
-    
-    _authors = self.get_candidates(entry, AUTHOR_CANDIDATE_JSONPATH)
-    for _a in _authors:
-      for author in self.author_extract.from_string(_a):
-        authors.add(author)
-
-    return list(authors)
-
-  def get_imgs(self, entry):
-    img_urls = self.get_candidates(entry, IMG_CANDIDATE_JSONPATH)
-    img_url, img, thumb = self.image_extract.get_top_img(img_urls)
-    return img_urls, img_url, img, thumb
-  
-  def get_article_html(self, entry):
-    """
-    Get all article text candidates and check which one is the longest.
-    """
-    candidates = self.get_candidates(entry, CONTENT_CANDIDATE_JSONPATH)
-    candidates.sort(key = len)
-    return candidates[-1]
-  
-  def get_tags(self, entry):
-    tags = set()
-    _tags = self.get_candidates(entry, TAG_CANDIDATE_JSONPATH)
-    for _t in _tags:
-      tags.add(_t)
-
-    return list(tags)
-
-  def get_text(self, article_html):
-    return strip_tags(article_html)
-  
-  def get_title(self, entry):
-    return entry['title']
-
-  def get_urls(self, article_html):
-    return self.url_extract.extract(html = article_html)
-
-
-  def parse_entry(self, e):
-
-    entry, updated_at = e
-    """
-    Parse an entry in an Article and 
+    Parse an entry into an Article and 
     merge data with Article Extraction
     """
-    url  = self.get_entry_url(entry)
-    dup  = self._check_new_url(url)
 
-    if url and not dup:
+    # initialize an article object
+    article = Article(url = url, org_id=self.org_id)
+    
+    # get image
+    img_urls, img_url, img, thumb = self.get_imgs( entry )
 
-      # initialize an article object
-      article = Article(url = url, source=self.source)
-      
-      # get image
-      img_urls, img_url, img, thumb = self.get_imgs( entry )
+    # get html
+    article_html = self.get_article_html( entry )
 
-      # get html
-      article_html = self.get_article_html( entry )
+    int_links, ext_links = self.get_urls(article_html)
 
-      int_links, ext_links = self.get_urls(article_html)
+    # get title
+    title = self.get_title( entry )
+    
+    # set values 
+    article.set_article_html(   article_html )
+    article.set_text(           self.get_text( article_html ) )
+    article.set_title(          title)
+    article.set_int_links(      int_links)
+    article.set_ext_links(      ext_links)
+    article.set_tags(           self.get_tags( entry ) )
+    article.set_authors(        self.get_authors( entry ) )
+    article.set_dates(          self.get_date( entry ) )
+    article.set_img_urls(       img_urls )
+    article.set_img(            img )
+    article.set_thumb(          thumb )
+    
+    # get article extraction and merge
+    np_article = self.article_extract.extract( 
+      url = url, org_id = self.org_id 
+      )
 
-      # get title
-      title = self.get_title( entry )
-      
-      # set values 
-      article.set_article_html(   article_html )
-      article.set_text(           self.get_text( article_html ) )
-      article.set_title(          title)
-      article.set_int_links(      int_links)
-      article.set_ext_links(      ext_links)
-      article.set_tags(           self.get_tags( entry ) )
-      article.set_authors(        self.get_authors( entry ) )
-      article.set_dates(          self.get_date( entry ) )
-      article.set_updated(        updated_at )
-      article.set_img_urls(       img_urls )
-      article.set_img(            img )
-      article.set_thumb(          thumb )
-      
-      # get article extraction and merge
-      np_article = self.article_extract.extract( url = url )
+    if np_article:
+      article = article.from_newspaper( np_article, merge=True)
 
-      if np_article:
-        article = article.from_newspaper( np_article, merge=True)
-        f.write(article.to_json() + "\n")
-      else:
-        f.write(article.to_json() + "\n")
-        
-  
-  def get_entries(self):
+    return article.to_dict()
+
+  def poller(self):
     """
-    parse feed and stream unique records
+    parse feed and stream entries
     """
     f = feedparser.parse(self.feed_url)
-
-    updated_at = self.get_date(f)
     for entry in f.entries:
-      self.tasks.put_nowait((entry, updated_at))
+      yield entry
 
-  def parse(self):
-    while not self.tasks.empty():
-      item = self.tasks.get()
-      self.parse_entry(item)
-      gevent.sleep(0)
-
-  def run(self):
-    gevent.spawn(self.get_entries).join()
-    gevent.joinall([
-        gevent.spawn(self.parse) 
-          for w in xrange(self.num_workers)
-    ])
-
+  def messenger(self, output):
+    return {
+      'url': output['url'],
+    }
 
 if __name__ == '__main__':
-  feed_url = 'http://rss.nytimes.com/services/xml/rss/nyt/Science.xml'
-  fp = FeedParser(feed_url = feed_url, source = 'http://www.nytimes.com/')
+  feed_url = 'http://feeds.feedburner.com/publici_rss'
+  fp = FeedParser(feed_url = feed_url, org_id = 'publicintegrity', domain = 'http://www.publicintegrity.org/')
   fp.run()
+

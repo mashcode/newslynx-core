@@ -100,16 +100,17 @@ class ArticleExtractor:
     we're basically just wrapping newspaper's 
     Article.build()
     """
-    if 'url' not in kwargs:
+    if 'url' not in kwargs or 'org_id' not in kwargs :
       raise ArticleExtractorError(
         'ArticleExtractor requires a url!'
       )
       
     # get the url 
     url = kwargs.get('url')
+    org_id = kwargs.get('org_id')
     
     # Initialize an Article object
-    article = Article(url = url)
+    article = Article(url = url, org_id = org_id)
     
     # for now we're just using newspaper 
     np_article = self.extract_newspaper(url = article.url)

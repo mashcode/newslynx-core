@@ -4,6 +4,7 @@ Global Settings for newslynx-core should go in here.
 import re
 import newspaper
 import logging
+from datetime import timedelta
 
 # suppress requests logging
 requests_log = logging.getLogger("requests")
@@ -13,7 +14,14 @@ requests_log.setLevel(logging.ERROR)
 USER_AGENT = "NewsLynx | (Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/534.48.3 (KHTML, like Gecko) Version/5.1 Safari/534.48.3)"
 REQUEST_TIMEOUT = 15
 
-GEVENT_QUEUE_SIZE = 25
+# POSTGRESQL
+DATABASE_URL = 'postgresql://brian:brian@localhost:5432/newslynx_core'
+
+# SET EXPIRATION
+SET_EXPIRES = timedelta(days=30)
+
+# GEVENT TASK QUEUE SIZE
+GEVENT_QUEUE_SIZE = 10
 
 # parsing settings
 NEWSPAPER_CONFIG = newspaper.Config()
@@ -23,8 +31,6 @@ NEWSPAPER_CONFIG.keep_article_html = True
 NEWSPAPER_CONFIG.fetch_images = True
 NEWSPAPER_CONFIG.MIN_WORD_COUNT = 200
 
-# max number of articles to grab from feed
-MAX_FEED_ENTRIES = 1000
 
 # url settings
 MAX_UNSHORTEN_ATTEMPTS = 5
