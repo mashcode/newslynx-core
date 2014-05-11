@@ -27,7 +27,7 @@ pip install boilerpipe
  - [x] Utilites for extracing Images
  - [x] Utilites for extracing Authors
  - [x] Article Extraction
- - [ ] `newslynx_core.database.db`. 
+ - [x] `newslynx_core.database.db`. 
   * The `dataset` object and explicit **postgresql** schema definitions for each source table. 
  - [x] `newslynx_core.controller.Controller`
   * A **redis** controller for Sources.
@@ -40,18 +40,21 @@ pip install boilerpipe
  - [ ] `newlynx_core.poll.Poll`
   * An abstract class for Polling multiple sources
   * Uses `Contoller` to determine what to poll when.
- - [x] `FeedParser`
- - [ ] `GAlert`
- - [ ] `Facebook`
+ - [x] `newslynx_core.feeds.parse_feed.FeedParser`
+ - [x] `newslynx_core.alerts.parse_galert.GAlertParser`
+ - [ ] `newslynx_core.social_media.facebook.Facebook`
    * parsing facebook posts
- - [ ] `Twitter`
+ - [ ] `newslynx_core.social_media.twitter.Twitter`
    * search twitter
    * build lists
    * parse lists
    * parse users
    * reading from streaming API (one set method, polls all org domains and shortlinks and checks for valid urls)
 - [ ] `Homepage`, detect what aritcle links are on each organization's homepage, when.
-
+- [ ] Figure out this stupid debug message:
+```
+Exception KeyError: KeyError(4322285680,) in <module 'threading' from '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.pyc'> ignored
+```
 ## Framework:
 
 Data will be polled from various sources using this basic straegy:
@@ -85,19 +88,17 @@ This queue will help power **pollster**, the approval river, and imapact recipes
 ** NOTE ** 
 Some feeds will not specifically associated with specific organizations, like `twitter-lists`.
 
-## Data Sources
+## Database Tables
 
 ### Articles
 
-### RSS Feeds
-
-### Homeapges
+### Google Alerts
 
 ### Twitter Lists
 
 ### Twitter Streaming
 
-### Google Alerts
-
 ### Facebook Pages
-   
+
+### Homepages
+
