@@ -8,10 +8,6 @@ from datetime import datetime, timedelta
 from urlparse import parse_qs
 import logging
 
-from particle.common import DEBUG
-
-log = logging.getLogger('particle')
-
 def connect(config):
     return facepy.GraphAPI(config['facebook']['stable_access_token'])
 

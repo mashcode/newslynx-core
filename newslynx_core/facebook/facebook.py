@@ -7,11 +7,6 @@ from pprint import pprint
 from datetime import datetime
 import logging
 
-from particle.common import fb_table, ins_table, DEBUG
-from particle.facebook import fb
-from particle.helpers import *
-
-
 FB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S+0000"
 
 log = logging.getLogger('particle')

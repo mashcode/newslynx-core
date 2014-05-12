@@ -8,7 +8,7 @@ import sys
 import redis
 
 from newslynx_core import settings
-from newslynx_core.utils.serialization import jsonify
+from newslynx_core.parsers.serialization import jsonify
 from newslynx_core.parsers.parse_date import (
   current_timestamp
   )
