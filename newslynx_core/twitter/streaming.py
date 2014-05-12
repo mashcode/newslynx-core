@@ -102,5 +102,4 @@ if __name__ == '__main__':
     settings.TWT_ACCESS_TOKEN,
     settings.TWT_ACCESS_SECRET)
 
-  stream.statuses.filter(track=['propublica', 'propub ca', 'publicintegrity'], filter_level=None)
-  
+  stream.statuses.filter(track=['propublica', 'propub ca', 'publicintegrity', 'ckbe at'], filter_level=None)
