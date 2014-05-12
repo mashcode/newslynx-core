@@ -63,6 +63,26 @@ def generate_schema():
   galerts.create_column('summary',           String)         
   galerts.create_column('datetime',          DateTime)
 
+  # TWEETS
+  twitter.create_column('twitter_id',        String)
+  twitter.create_column('text',              String)
+  twitter.create_column('profile_img',       String)
+  twitter.create_column('screen_name',       String)
+  twitter.create_column('in_reply_to_status_id', String)
+  twitter.create_column('in_reply_to_screen_name', String)
+
+  twitter.create_column('datetime',          DateTime)
+
+  twitter.create_column('favorites',         Numeric)
+  twitter.create_column('followers',         Numeric)
+  twitter.create_column('friends',           Numeric)
+  twitter.create_column('retweets',          Numeric)
+  twitter.create_column('verified',          Numeric)
+  twitter.create_column('hashtags',          postgresql.ARRAY(String))
+  twitter.create_column('urls',              postgresql.ARRAY(String))
+  twitter.create_column('user_mentions',     postgresql.ARRAY(String))
+  twitter.create_column('img_urls',          postgresql.ARRAY(String))
+  
 
   # TODO #
   # # generate indices
