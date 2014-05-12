@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-An abstract class for performing a specific task.
+An abstract class for performing polling a feed of data.
 Built in functionality for checking whether
 we've done a task, adding this task to our log,
 inserting the output into the respect table,

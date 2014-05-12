@@ -12,13 +12,15 @@ from slugify import slugify
 from hashlib import sha1
 import httplib
 import requests
+import httplib
+from retrying import retry, RetryError
 from urlparse import (
   urlparse, urljoin, urlsplit, urlunsplit, parse_qs
   )
 
 from newslynx_core.parsers.parse_date import date_regex
 from newslynx_core.parsers.parse_re import (
-  match_regexes
+  match_regex
   )
 
 from newslynx_core import settings
@@ -46,9 +48,6 @@ BAD_DOMAINS = [
   'amazon', 'doubleclick', 'twitter',
   'facebook'
   ]
-
-
-# REGEX # 
 
 # this regex was brought to you by django!
 re_abs_url = re.compile(r"""
@@ -186,6 +185,13 @@ def url_to_slug(url):
   elif url.endswith('-'):
     url = url[-1]
 
+  # remove starting slugs for
+  # sections
+  for path in GOOD_PATHS:
+    slug = "%s-" % path
+    if url.startswith(slug):
+      url = url.replace(slug, '')
+
   return url.strip()
 
 def url_to_hash(url):
@@ -278,10 +284,10 @@ def valid_url(
 
   # if we pass in custom regexes, check those first
   if bad_regex:
-    return not match_regexes(bad_regex, url, bad_test)
+    return not match_regex(bad_regex, url, bad_test)
 
   elif good_regex:
-    return match_regexes(good_regex, url, good_test)
+    return match_regex(good_regex, url, good_test)
 
   # 11 chars is shortest valid url length, eg: http://x.co
   if url is None or len(url) < 11:
@@ -387,79 +393,91 @@ def valid_url(
 
 # a big ugly list of short_urls
 re_short_domains = re.compile(r"""
-  (.*bit\.do$)|
-  (.*t\.co$)|
-  (.*go2\.do$)|
-  (.*adf\.ly$)|
-  (.*goo\.gl$)|
-  (.*bitly\.com$)|
-  (.*bit\.ly$)|
-  (.*tinyurl\.com$)|
-  (.*ow\.ly$)|
-  (.*bit\.ly$)|
-  (.*adcrun\.ch$)|
-  (.*zpag\.es$)|
-  (.*ity\.im$)|
-  (.*q\.gs$)|
-  (.*lnk\.co$)|
-  (.*viralurl\.com$)|
-  (.*is\.gd$)|
-  (.*vur\.me$)|
-  (.*bc\.vc$)|
-  (.*yu2\.it$)|
-  (.*twitthis\.com$)|
-  (.*u\.to$)|
-  (.*j\.mp$)|
-  (.*bee4\.biz$)|
-  (.*adflav\.com$)|
-  (.*buzurl\.com$)|
-  (.*xlinkz\.info$)|
-  (.*cutt\.us$)|
-  (.*u\.bb$)|
-  (.*yourls\.org$)|
-  (.*fun\.ly$)|
-  (.*hit\.my$)|
-  (.*nov\.io$)|
-  (.*crisco\.com$)|
-  (.*x\.co$)|
-  (.*shortquik\.com$)|
-  (.*prettylinkpro\.com$)|
-  (.*viralurl\.biz$)|
-  (.*longurl\.org$)|
-  (.*tota2\.com$)|
-  (.*adcraft\.co$)|
-  (.*virl\.ws$)|
-  (.*scrnch\.me$)|
-  (.*filoops\.info$)|
-  (.*linkto\.im$)|
-  (.*vurl\.bz$)|
-  (.*fzy\.co$)|
-  (.*vzturl\.com$)|
-  (.*picz\.us$)|
-  (.*lemde\.fr$)|
-  (.*golinks\.co$)|
-  (.*xtu\.me$)|
-  (.*qr\.net$)|
-  (.*1url\.com$)|
-  (.*tweez\.me$)|
-  (.*sk\.gy$)|
-  (.*gog\.li$)|
-  (.*cektkp\.com$)|
-  (.*v\.gd$)|
-  (.*p6l\.org$)|
-  (.*id\.tl$)|
-  (.*dft\.ba$)|
-  (.*aka\.gr$)
+  (^bit\.do$)|
+  (^t\.co$)|
+  (^go2\.do$)|
+  (^adf\.ly$)|
+  (^goo\.gl$)|
+  (^bitly\.com$)|
+  (^bit\.ly$)|
+  (^tinyurl\.com$)|
+  (^ow\.ly$)|
+  (^bit\.ly$)|
+  (^adcrun\.ch$)|
+  (^zpag\.es$)|
+  (^ity\.im$)|
+  (^q\.gs$)|
+  (^lnk\.co$)|
+  (^viralurl\.com$)|
+  (^is\.gd$)|
+  (^vur\.me$)|
+  (^bc\.vc$)|
+  (^yu2\.it$)|
+  (^twitthis\.com$)|
+  (^u\.to$)|
+  (^j\.mp$)|
+  (^bee4\.biz$)|
+  (^adflav\.com$)|
+  (^buzurl\.com$)|
+  (^xlinkz\.info$)|
+  (^cutt\.us$)|
+  (^u\.bb$)|
+  (^yourls\.org$)|
+  (^fun\.ly$)|
+  (^hit\.my$)|
+  (^nov\.io$)|
+  (^crisco\.com$)|
+  (^x\.co$)|
+  (^shortquik\.com$)|
+  (^prettylinkpro\.com$)|
+  (^viralurl\.biz$)|
+  (^longurl\.org$)|
+  (^tota2\.com$)|
+  (^adcraft\.co$)|
+  (^virl\.ws$)|
+  (^scrnch\.me$)|
+  (^filoops\.info$)|
+  (^linkto\.im$)|
+  (^vurl\.bz$)|
+  (^fzy\.co$)|
+  (^vzturl\.com$)|
+  (^picz\.us$)|
+  (^lemde\.fr$)|
+  (^golinks\.co$)|
+  (^xtu\.me$)|
+  (^qr\.net$)|
+  (^1url\.com$)|
+  (^tweez\.me$)|
+  (^sk\.gy$)|
+  (^gog\.li$)|
+  (^cektkp\.com$)|
+  (^v\.gd$)|
+  (^p6l\.org$)|
+  (^id\.tl$)|
+  (^dft\.ba$)|
+  (^aka\.gr$)|
+  (^bbc.in$)|
+  (^ift\.tt$)|
+  (^amzn.to$)|
+  (^p\.tl$)|
+  (^trib\.al$)|
+  (^1od\.biz$)|
+  (^ht\.ly$)|
+  (^fb\.me$)|
+  (^4sq\.com$)|
+  (^tmblr\.co$)|
+  (^dlvr\.it$)|
+  (^ow\.ly$)
   """, flags=re.VERBOSE)
 
 def is_short_url(url, regex=None, test="any"):
   """
   test url for short links,
-  allow str/ list / retype's and passing in 
+  allow str / list / retype's and passing in 
   custom urls
   """
   # pass in specific regexes
-  domain = get_domain(url)
+  domain  = get_domain(url)
   if regex:
     return match_regex(regex=regex, s=domain, test=test)
 
@@ -469,58 +487,90 @@ def is_short_url(url, regex=None, test="any"):
   else:
     return False
 
-def unshorten_url(url, regex=None, test="any"):
-  """
-  recursively unshorten a url
-  """
-  # open url
-  r = requests.get(url)
 
-  # if we don't get anyhting just pass, we'll try
-  # again if it's a short link, otherwise
-  # we'll just return it.
-  if r.status_code != 200:
-    pass
-  # if we do get something, update url
-  else:
-    url = r.url
+@retry(retry_on_result=is_short_url, stop_max_delay=settings.UNSHORTEN_TIMEOUT)
+def unshorten_url(url):
+  try:
+    r = requests.get(
+    'http://api.longurl.org/v2/expand',
+    params = {
+      'url'    :  url,
+      'format' : 'json'
+      }
+    )
+    return r.json().get('long-url', url)
+  
+  except RetryError:
+    return url
 
-  # test if the url is short
-  test = is_short_url(url, regex, test)
+# # fast, recursive url shortener.
+# @retry(stop_max_delay=5000)
+# def unshorten_url(url):
+#   parsed = urlparse(url)
+#   h = httplib.HTTPConnection(parsed.netloc)
+#   h.request('HEAD', parsed.path)
+#   response = h.getresponse()
+#   try:
+#     if response.status/100 == 3 and response.getheader('Location'):
+#       return unshorten_url(response.getheader('Location')) # changed to process chains of short urls
+#     else:
+#       return url
+#   except RetryError:
+#     return url
 
-  # if it's still short, recursively unshorten
-  if test:
-    tries = 0
-    while test:
+# def unshorten_url(url, regex=None, test="any"):
+#   """
+#   recursively unshorten a url
+#   """
+#   try:
+#     # open url
+#     r = requests.get(url)
 
-      # iterate tries
-      tries += 1
-      
-      try:
-        r = requests.get(url)
-      
-      except Exception as e:
-        print "error on `unshorten_link`, %s" % str(e)
-        break
+#     # if we don't get anyhting just pass, we'll try
+#     # again if it's a short link, otherwise
+#     # we'll just return it.
+#     if r.status_code != 200:
+#       pass
+#     # if we do get something, update url
+#     else:
+#       url = r.url
 
-      else:
+#     # if it's still short, recursively unshorten
+#     if test:
+#       tries = 0
+#       while test:
+
+#         # iterate tries
+#         tries += 1
         
-        # TODO: don't fail silently
-        if r.status_code != 200:
-          break
+#         try:
+#           r = requests.get(url)
         
-        # update url and give it one more shot!
-        else:
-          url = r.url
-        
-          # if it's not short now, stop
-          if not is_short_url(url, regex, test):
-            break
+#         except Exception as e:
+#           print "error on `unshorten_link`, %s" % str(e)
+#           break
 
-          # if we've tried X times, give up
-          if tries == settings.MAX_UNSHORTEN_ATTEMPTS:
-            break
+#         else:
+          
+#           # TODO: don't fail silently
+#           if r.status_code != 200:
+#             break
+          
+#           # update url and give it one more shot!
+#           else:
+#             url = r.url
+          
+#             # if it's not short now, stop
+#             if not is_short_url(url, regex, test):
+#               break
 
-  # parse url at final state
-  return prepare_url(url)
+#             # if we've tried X times, give up
+#             if tries == settings.MAX_UNSHORTEN_ATTEMPTS:
+#               break
+
+#   except requests.exceptions.TooManyRedirects:
+#     pass
+
+#   # parse url at final state
+#   return url
 

@@ -11,6 +11,9 @@ def build_regex(regex):
   a helper for building regexes 
   from multiple formats.
   """
+  if not regex:
+    return []
+    
   # if the regex is not a list, make it one
   if not isinstance(regex, list):
     regex = [regex]
@@ -37,10 +40,13 @@ def get_matches(regexes, s):
   return [m for m in (r.search(s) for r in regexes ) if m]
 
 
-def match_regexes(regexes, s, method="any"):
+def match_regex(regexes, s, method="any"):
   """
   a helper for testing multiple regexes
   """
+  if len(regexes) == 0:
+    return True
+
   matches = get_matches(regexes, s)
 
   # apply tests
