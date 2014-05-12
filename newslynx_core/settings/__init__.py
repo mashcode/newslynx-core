@@ -2,6 +2,7 @@
 Global Settings for newslynx-core should go in here.
 """
 import re
+import os
 import newspaper
 import logging
 from datetime import timedelta
@@ -10,12 +11,19 @@ from datetime import timedelta
 requests_log = logging.getLogger("requests")
 requests_log.setLevel(logging.ERROR)
 
+# POSTGRESQL
+DATABASE_URL = os.getenv('NEWSLYNX_DB_URL')
+
+# Facebook API
+FB_APP_IP = os.getenv('NEWSLYNX_FB_APP_ID')
+FB_APP_SECRET = os.getenv('NEWSLYNX_FB_APP_SECRET')
+
+# Twitter API
+TWT_API_KEY = os.getenv('NEWSLYNX_TWT_API_KEY')
+
 # requests settings 
 USER_AGENT = "NewsLynx | (Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/534.48.3 (KHTML, like Gecko) Version/5.1 Safari/534.48.3)"
 REQUEST_TIMEOUT = 15
-
-# POSTGRESQL
-DATABASE_URL = 'postgresql://brian:brian@localhost:5432/nl'
 
 # SET EXPIRATION
 SET_EXPIRES = timedelta(days=30)
