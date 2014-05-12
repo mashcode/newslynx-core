@@ -20,10 +20,9 @@ FB_APP_SECRET = os.getenv('NEWSLYNX_FB_APP_SECRET')
 
 # Twitter API
 TWT_API_KEY = os.getenv('NEWSLYNX_TWT_API_KEY')
-
-# requests settings 
-USER_AGENT = "NewsLynx | (Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/534.48.3 (KHTML, like Gecko) Version/5.1 Safari/534.48.3)"
-REQUEST_TIMEOUT = 15
+TWT_API_SECRET = os.getenv('NEWSLYNX_TWT_API_SECRET')
+TWT_ACCESS_TOKEN = os.getenv('NEWSLYNX_TWT_ACCESS_TOKEN')
+TWT_ACCESS_SECRET = os.getenv('NEWSLYNX_TWT_ACCESS_SECRET')
 
 # SET EXPIRATION
 SET_EXPIRES = timedelta(days=30)
@@ -38,8 +37,6 @@ NEWSPAPER_CONFIG.request_timeout = REQUEST_TIMEOUT
 NEWSPAPER_CONFIG.keep_article_html = True
 NEWSPAPER_CONFIG.fetch_images = True
 NEWSPAPER_CONFIG.MIN_WORD_COUNT = 200
-
-
 # url settings
 MAX_UNSHORTEN_ATTEMPTS = 5
 
@@ -51,3 +48,8 @@ KNOWN_ARTICLE_REGEX = re.compile(r"""
   (.*\.nytimes\.com/(.*/)?[0-9]+/[0-9]+/[0-9]+/.*)|
   (.*propublica.org/[a-z]+/[a-z0-9/-]+)|
 """, re.VERBOSE)
+
+# requests settings 
+USER_AGENT = "NewsLynx | (Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/534.48.3 (KHTML, like Gecko) Version/5.1 Safari/534.48.3)"
+REQUEST_TIMEOUT = 15
+
