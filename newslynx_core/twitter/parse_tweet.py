@@ -43,8 +43,17 @@ class TweetParser:
       urls.add(self.parse_url(url))
     return list(urls)
 
+  def get_datetime(self, tweet):
+    pass
+
   def get_hashtags(self, e):
-    return e.get('hashtags', [])
+    hashtags = set()
+    candidates = e.get('hashtags', [])
+    if len(candidates) == 0:
+      return []
+    for c in candidates:
+      hashtags.add(c.get('text'))
+    return list(hashtags)
 
   def get_user_mentions(self, e):
     mentions = set()
@@ -68,9 +77,9 @@ class TweetParser:
     return {
       'screen_name': user.get('screen_name', None),
       'followers': user.get('followers_count', None),
-      'friends_count': user.get('friends_count', None),
+      'friends': user.get('friends_count', None),
       'profile_img': user.get('profile_image_url', None),
-      'verified': user.get('verified', False)
+      'verified': 1 if user.get('verified', False) else 0 # convert bool
     }
 
   def parse(self, tweet):

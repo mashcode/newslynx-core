@@ -19,8 +19,8 @@ so make sure to do additional pattern-matching in your code.
 See the table below for more examples related to this issue.
 """
 
-twp = TweetParser()
 
+twp = TweetParser()
 class StreamHandler(TwythonStreamer):
   def on_success(self, data):
     data = twp.parse(data)
@@ -29,12 +29,27 @@ class StreamHandler(TwythonStreamer):
   def on_error(self, status_code, data):
       print status_code
 
-if __name__ == '__main__':
-  
-  stream = StreamHandler(
-    settings.TWT_API_KEY, 
-    settings.TWT_API_SECRET,
-    settings.TWT_ACCESS_TOKEN,
-    settings.TWT_ACCESS_SECRET)
+class TwitterStream:
+  def __init__(self, **kwargs):
+    self.stream = StreamHandler(
+      settings.TWT_API_KEY, 
+      settings.TWT_API_SECRET,
+      settings.TWT_ACCESS_TOKEN,
+      settings.TWT_ACCESS_SECRET
+    ) 
+    self.terms = kwargs.get('terms')
+    self.filter_level = kwargs.get('filter_level', None)
 
-  stream.statuses.filter(track=['hello', 'propub ca', 'publicintegrity', 'ckbe at'], filter_level=None)
+  def run(self):
+    self.stream.statuses.filter(
+      track=self.terms, 
+      filter_level=self.filter_level
+      )
+
+if __name__ == '__main__':
+  ts = TwitterStream(terms=['hello'])
+  ts.run()
+  
+
+
+  
