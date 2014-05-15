@@ -1,0 +1,12 @@
+description: two
+# specifying a dependency or simply specifying which field(s)
+# you need are both supported
+#dependencies:
+#    - one
+requires:
+    - title
+schema:
+    orig-title: string
+    facebook:
+        shares: integer
+        likes: integer

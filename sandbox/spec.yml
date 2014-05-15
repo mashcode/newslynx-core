@@ -1,0 +1,14 @@
+description: |
+    This analysis does this and this and that.
+requires:
+    - bla
+    - bleep.bloop
+schema:
+    basic:
+        some-field:
+            subfield-A: [text]
+            subfield-B: integer
+    other: float
+
+#- bool
+#- date, datetime, timestamp
