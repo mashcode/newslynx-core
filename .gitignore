@@ -2,9 +2,5 @@ build/
 dist/
 *.egg-info/
 *.pyc
-*/*.pyc
-*/*/*.pyc
 *.log
 *.DS_Store
-*/*.DS_Store
-*/*/*.DS_Store
