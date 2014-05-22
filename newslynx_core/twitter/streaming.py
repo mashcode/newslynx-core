@@ -19,12 +19,11 @@ so make sure to do additional pattern-matching in your code.
 See the table below for more examples related to this issue.
 """
 
-
 twp = TweetParser()
 class StreamHandler(TwythonStreamer):
   def on_success(self, data):
     data = twp.parse(data)
-    pprint(data)
+    pprint(data['urls'])
 
   def on_error(self, status_code, data):
       print status_code
@@ -47,7 +46,11 @@ class TwitterStream:
       )
 
 if __name__ == '__main__':
-  ts = TwitterStream(terms=['hello'])
+  ts = TwitterStream(terms=[
+    'propublica org', 'propub ca', 'ny chalkbeat org', 'tn chalkbeat org',
+    'motherjones com', 'mojo ly', 'co chalkbeat org', 'invw org', 
+    'ckbe at', 'in chalkbeat org', 'publicintegrity org'
+    ])
   ts.run()
   
 

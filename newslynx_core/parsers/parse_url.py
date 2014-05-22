@@ -122,6 +122,10 @@ def prepare_url(url, source_url=None):
     print 'url %s failed on err %s' % (url, str(e))
     proper_url = u''
 
+  # remove trailing slashes
+  if proper_url.endswith('/'):
+    proper_url = proper_url[:-1]
+
   return proper_url
 
 def get_domain(abs_url, **kwargs):
@@ -467,7 +471,11 @@ re_short_domains = re.compile(r"""
   (^4sq\.com$)|
   (^tmblr\.co$)|
   (^dlvr\.it$)|
-  (^ow\.ly$)
+  (^ow\.ly$)|
+  (^mojo\.ly$)|
+  (^propub\.ca$)|
+  (^feeds\.propublica\.org$)|
+  (^ckbe\.at$)
   """, flags=re.VERBOSE)
 
 def is_short_url(url, regex=None, test="any"):
@@ -487,7 +495,6 @@ def is_short_url(url, regex=None, test="any"):
   else:
     return False
 
-
 @retry(retry_on_result=is_short_url, stop_max_delay=settings.UNSHORTEN_TIMEOUT)
 def unshorten_url(url):
   try:
@@ -499,8 +506,7 @@ def unshorten_url(url):
       }
     )
     return r.json().get('long-url', url)
-  
-  except RetryError:
+  except:
     return url
 
 # # fast, recursive url shortener.

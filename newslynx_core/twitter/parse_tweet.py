@@ -1,8 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-
-from newslynx_core.parsers.parse_re import (
-  build_regex, match_regex
-  )
 from newslynx_core.parsers.parse_url import (
   is_short_url, unshorten_url, prepare_url, 
   url_to_slug, get_domain, get_simple_domain,
