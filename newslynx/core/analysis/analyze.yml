@@ -1,0 +1,7 @@
+# this job file is finetuned further by `analyze.py`
+
+- script: "find.py"
+  dependencies:
+    python:
+      - manta
+- script: "analyze.py"

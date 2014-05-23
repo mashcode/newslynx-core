@@ -1,0 +1,4 @@
+description: Extract article title and body from the raw HTML.
+schema:
+    title: text
+    body: text

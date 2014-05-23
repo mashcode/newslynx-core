@@ -1,0 +1,8 @@
+description: |
+    Get metadata tags (lang, keywords, description) from HTML.
+schema:
+    metadata:
+        html:
+            language: text
+            description: text
+            keywords: text[]

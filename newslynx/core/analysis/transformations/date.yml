@@ -1,0 +1,4 @@
+description: |
+    Figure out the publication date of an article, using available candidate dates.
+schema:
+    publication-date: datetime

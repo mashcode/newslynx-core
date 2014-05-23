@@ -1,0 +1,6 @@
+description: Extract keywords from the body copy as well as tags from the raw HTML.
+requirements:
+    - body
+schema:
+    tags: text[]
+    keywords: text[]

@@ -1,0 +1,4 @@
+description: Extract images and video from the HTML.
+schema:
+    images: text[]
+    videos: text[]
