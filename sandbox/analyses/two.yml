@@ -3,10 +3,15 @@ description: two
 # you need are both supported
 #dependencies:
 #    - one
-requires:
+requirements:
     - title
+environment:
+    python:
+        - lxml
+    apt:
+        - ffmpeg
 schema:
-    orig-title: string
+    orig-title: text
     facebook:
         shares: integer
         likes: integer
