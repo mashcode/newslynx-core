@@ -85,7 +85,7 @@ ORGANIZATIONS = [
     'org_id': 'chalkbeatny',
     'homepage': 'http://ny.chalkbeat.org/',
     'short_url': 'ckbe.at',
-    'rss_feeds': [
+    'rss_feeds': [  
       'http://ny.chalkbeat.org/feed/'
       ],
     'twitter_acounts': [
