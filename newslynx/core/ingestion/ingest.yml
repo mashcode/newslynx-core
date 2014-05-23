@@ -1,0 +1,17 @@
+# in pipespeak, this would amount to something like: 
+#
+#   cat ../../fixtures/organizations.yml | python organizations.py | python feeds.py
+# 
+
+- script: "organizations.py"
+  inputs:
+    - /var/tmp/files/organizations.yml
+  dependencies:
+    files:
+      - ../../fixtures/organizations.yml
+- script: "feeds.py"
+  dependencies:
+    python:
+      - requests
+      - feedparser
+      - manta
