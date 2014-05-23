@@ -6,7 +6,7 @@ from pip.req import parse_requirements
 #   ] 
 
 setup(
-  name='newslynx-core',
+  name='newslynx',
   version='0.0.1',
   description="",
   long_description="",
