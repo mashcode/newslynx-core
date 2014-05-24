@@ -26,7 +26,7 @@ See the table below for more examples related to this issue.
 # generic tweet parser as default
 _twp = TweetParser()
 
-class StreamHandler(TwythonStreamer):
+class _TwitterStreamHandler(TwythonStreamer):
   def __init__(self, **kwargs):
     
     TwythonStreamer.__init__(
@@ -66,7 +66,7 @@ class TwitterStreamParser:
           'api_secret, access_token, access_secret'
           'and func to run'
           )
-    self.stream = StreamHandler(
+    self.stream = _TwitterStreamHandler(
       api_key = kwargs.get('api_key', settings.TWT_API_KEY), 
       api_secret = kwargs.get('api_secret', settings.TWT_API_SECRET),
       access_token = kwargs.get('access_token', settings.TWT_ACCESS_TOKEN),
