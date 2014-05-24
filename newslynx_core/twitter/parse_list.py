@@ -18,7 +18,7 @@ class TwitterListParser(Source):
         )
     Source.__init__(
       self,
-      org_id = kwargs.get('org_id', 'public'),
+      org_id = 'public',
       source_type = 'twitter'
       )
     self.list_owner = kwargs.get('list_owner')

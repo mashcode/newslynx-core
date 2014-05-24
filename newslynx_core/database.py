@@ -111,6 +111,7 @@ def ensure_schema():
   facebook_posts.create_column('description',         String)
   facebook_posts.create_column('status_type',         String)
   facebook_posts.create_column('type',                String)
+  facebook_posts.create_column('img_url',             String)
 
   # Page Stats
   facebook_page_stats.create_column('org_id',String)
@@ -243,14 +244,12 @@ def ensure_schema():
   except ProgrammingError:
     pass
 
-def gen_db():
+def drop_dbs():
+  for table in db.tables:
+    table.drop()
   db_name = db_url.split('/')[-1]
-  try:
-    db.query('drop database %s;' % db_name)
-  except ProgrammingError:
-    db.query('create database %s;' % db_name)
-  else:
-    db.query('create database %s;' % db_name)
+  db.query('drop database %s;' % db_name)
+  db.query('create database %s;' % db_name)
 
 if __name__ == '__main__':
   import sys

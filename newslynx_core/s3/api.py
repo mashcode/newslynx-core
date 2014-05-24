@@ -47,6 +47,8 @@ class S3(object):
     self.s3_uri = kwargs.get('s3_uri', settings.AWS_S3_STOR)
     self.bucket_name, self.stor = parse_s3_uri(self.s3_uri)
     self.bucket = self._connect_to_bucket(self.bucket_name)
+    self.format = kwargs.get('format', 'json.gz')
+    self.filetype = ".%s" % self.format
 
   def _connect_to_bucket(self, bucket_name):
     conn = boto.connect_s3(
@@ -58,7 +60,7 @@ class S3(object):
           return i
 
   def make_fp(self, filepath):
-    fp = os.path.join(self.stor, filepath + ".json.gz")
+    fp = os.path.join(self.stor, filepath + self.filetype)
     return fp
 
   def put(self, filepath, data):

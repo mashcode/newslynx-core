@@ -95,7 +95,7 @@ This queue will help power **pollster**, the approval river, and imapact recipes
 ** NOTE ** 
 Some feeds will not specifically associated with specific organizations, like `twitter-lists`.
 
-## SCHEMA:
+## Schema:
 ```
   # ARTICLES
   articles.org_id – String

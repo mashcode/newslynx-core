@@ -21,6 +21,10 @@ from newslynx_core import settings
 class SourceInitError(Exception):
   pass
 
+class SourceTimeout(Exception):
+  pass
+
+
 class Source:
   """
   Each Source must be initialized with
@@ -42,6 +46,7 @@ class Source:
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
+    self.timeout = kwargs.get('timeout', 600)
 
     # access datastores
     self._table = db[self.source_type]
@@ -119,16 +124,12 @@ class Source:
 
       # if it worked, send off data
       if output:
-
-        # push to redisquue / sql / s3
-        threads = [
-          gevent.spawn(self._table.insert, output),
-          gevent.spawn(self._mailman, task_id, output)
-          ]
-        gevent.joinall(threads)
-
-        # sleep
-        gevent.sleep(0)
+        with gevent.Timeout(self.timeout, SourceTimeout) as to:
+          # push to redisquue / sql / s3
+          self._table.insert(output)
+          self._mailman(task_id, output)
+          # sleep
+          gevent.sleep(0.001)
 
   def _mailman(self, task_id, output):
 

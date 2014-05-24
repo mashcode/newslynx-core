@@ -28,6 +28,9 @@ setup(
   zip_safe=False,
   install_requires=[],
   tests_require=[],
-  entry_points={
+  entry_points = {
+    'console_scripts': [
+          'nlc = newslynx_core:cli.cli'
+    ]
   }
 )

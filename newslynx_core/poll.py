@@ -7,39 +7,47 @@ import gevent.monkey
 gevent.monkey.patch_all()
 
 from newslynx_core.fixtures.organizations import ORGANIZATIONS
+from newslynx_core.database import db 
+
+class PollTimeout(Exception):
+  pass
 
 class Poll:
   """
   An abstract class for running parsers.
   """
   def __init__(self, **kwargs):
-    self.organizations = ORGANIZATIONS # TODO: hook up to database
-    self.num_workers = kwargs.get('num_workers', 10)
+    self.organizations = ORGANIZATIONS
+    self.db = db # TODO: hook up to database
+    self.num_workers = kwargs.get('num_workers', 2)
+    self.timeout = kwargs.get('timeout', 800)
     self.tasks = Queue()
 
-  def poller(self):
+  def get_tasks(self, query=None):
     """
     extract metadata from organizations for parsing
+    via sql query. (fixture for now.)
     """
     pass 
 
-  def parser(self, kw):
+  def exec_task(self, task):
     pass
 
-  def _assign_tasks(self):
-    for task in self.poller():
-      self.tasks.put_no_wait(task)
+  def _get_tasks(self):
+    for task in self.get_tasks():
+      self.tasks.put_nowait(task)
 
-  def _run_tasks(self):
+  def _exec_tasks(self):
     while not self.tasks.empty():
       task = self.tasks.get()
-      self.parser(task)
+      with gevent.Timeout(self.timeout, PollTimeout) as to:
+        self.exec_task(task)
       gevent.sleep(0)
 
   def run(self):
-    gevent.spawn(self._assign_tasks).join()
+    gevent.spawn(self._get_tasks).join()
     gevent.joinall([
-        gevent.spawn(self._run_tasks) 
+        gevent.spawn(self._exec_tasks) 
           for w in xrange(self.num_workers)
     ])
 

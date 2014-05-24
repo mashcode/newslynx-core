@@ -19,7 +19,7 @@ class TwitterSearchParser(Source):
         )
     Source.__init__(
       self,
-      org_id = kwargs.get('org_id', 'public'),
+      org_id = 'public',
       source_type = 'twitter'
       )
     self.api = connect(**kwargs)

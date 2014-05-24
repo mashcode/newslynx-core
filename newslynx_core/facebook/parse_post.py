@@ -63,7 +63,7 @@ class FacebookPostParser:
     data['page_id'] = self.page_id
     data['post_id'] = post.get('id', None)
     data['urls'] = self.get_urls(post)
-    data['img'] = self.get_img(post)
+    data['img_url'] = self.get_img(post)
     data['datetime'] = self.get_datetime(post)
     data['message'] = post.get('message', None)
     data['description'] = post.get('description', None)

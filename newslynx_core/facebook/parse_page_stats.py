@@ -6,15 +6,15 @@ from datetime import datetime
 from newslynx_core.source import Source 
 from newslynx_core.facebook.api import connect 
 
-class FacebookPageStatsInitError(Exception):
+class FacebookPageStatsParserInitError(Exception):
   pass
 
-class FacebookPageStats(Source):
+class FacebookPageStatsParser(Source):
   def __init__(self, **kwargs):
 
     if  'page_id' not in kwargs:
-      raise FacebookPageStatsInitError(
-        'FacebookPageStats requires a page_id in order to run'
+      raise FacebookPageStatsParserInitError(
+        'FacebookPageStatsParser requires a page_id in order to run'
       )
     Source.__init__(
       self, 
@@ -44,6 +44,6 @@ class FacebookPageStats(Source):
     return data 
 
 if __name__ == '__main__':
-  fbps = FacebookPageStats(org_id='propublica', page_id='propublica')
+  fbps = FacebookPageStatsParser(org_id='propublica', page_id='propublica')
   fbps.run()
 
