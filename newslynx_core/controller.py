@@ -9,9 +9,6 @@ import os
 import redis
 from hashlib import sha1 
 from datetime import datetime
-import gevent 
-import gevent.monkey
-gevent.monkey.patch_all()
 
 from newslynx_core import settings
 from newslynx_core.parsers.serialization import jsonify
@@ -19,6 +16,10 @@ from newslynx_core.s3.api import S3
 from newslynx_core.parsers.parse_date import (
   current_timestamp
   )
+
+import gevent 
+import gevent.monkey
+gevent.monkey.patch_all()
 
 #instaniate a connection pool
 pool = redis.ConnectionPool(host='localhost', port=6379, db=0)

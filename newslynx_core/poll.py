@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from newslynx_core.fixtures.organizations import ORGANIZATIONS
+from newslynx_core.database import db 
+
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all(thread=False)
 
-from newslynx_core.fixtures.organizations import ORGANIZATIONS
-from newslynx_core.database import db 
 
 class PollTimeout(Exception):
   pass

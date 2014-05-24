@@ -9,14 +9,15 @@ inserting the output into the respect table,
 and publishing a message to the queue.
 """
 from retrying import retry
-import gevent
-from gevent.queue import Queue
-import gevent.monkey
-gevent.monkey.patch_all(thread=False)
 
 from newslynx_core.controller import Controller
 from newslynx_core.database import db
 from newslynx_core import settings
+
+import gevent
+from gevent.queue import Queue
+import gevent.monkey
+gevent.monkey.patch_all(thread=False)
 
 class SourceInitError(Exception):
   pass
