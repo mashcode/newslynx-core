@@ -54,7 +54,7 @@ pip install boilerpipe
    * parse users
    * reading from streaming API
    * TODO authentication with other users credentials.
-- [ ] `newslynx_core.homepage`
+- [x] `newslynx_core.homepage`
   * detect what aritcle links are on each organization's homepage, when.
 - [ ] Figure out this stupid debug message:
 ```
