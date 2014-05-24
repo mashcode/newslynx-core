@@ -16,7 +16,7 @@ class JSONEncoder(json.JSONEncoder):
   def __init__(self, refs=False):
     self.refs = refs
     super(JSONEncoder, self).__init__()
-
+    
   def default(self, obj):
     if isinstance(obj, datetime):
       return obj.isoformat()
