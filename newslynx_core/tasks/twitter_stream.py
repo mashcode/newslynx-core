@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from newslynx_core.poll import Poll
-
 # parser
 from newslynx_core.twitter.parse_stream import (
   TwitterStreamParser
   )
-class twitter_stream(Poll):
+from newslynx_core.fixtures.organizations import ORGANIZATIONS
+class twitter_stream:
+  organizations = ORGANIZATIONS
   def run(self):
     terms = set()
     for o in self.organizations:
