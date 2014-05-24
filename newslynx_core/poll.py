@@ -21,7 +21,7 @@ class Poll:
     self.organizations = ORGANIZATIONS
     self.db = db # TODO: hook up to database
     self.num_workers = kwargs.get('num_workers', 5)
-    self.timeout = kwargs.get('timeout', 300)
+    self.timeout = kwargs.get('timeout', 20)
     self.tasks = Queue()
 
   def get_tasks(self, query=None):
@@ -36,23 +36,23 @@ class Poll:
 
   def _get_tasks(self):
     for task in self.get_tasks():
-      self.tasks.put_nowait(task)
+      self.tasks.put(task, block=False, timeout=self.timeout)
 
   def _exec_tasks(self):
     while not self.tasks.empty():
       task = self.tasks.get()
       self.exec_task(task)
-      gevent.sleep(0)
+      gevent.sleep(1)
 
-  def run(self):
+  def gvnt(self):
     gevent.spawn(self._get_tasks).join()
     gevent.joinall([
         gevent.spawn(self._exec_tasks) 
           for w in xrange(self.num_workers)
     ])
 
-  def debug(self):
-    for task in self.poller():
-      self.parser(task)
+  def run(self):
+    for task in self.get_tasks():
+      self.exec_task(task)
 
 

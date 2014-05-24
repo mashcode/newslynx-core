@@ -17,7 +17,7 @@ from newslynx_core import settings
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
-gevent.monkey.patch_all(thread=False)
+gevent.monkey.patch_all()
 
 class SourceInitError(Exception):
   pass
@@ -105,7 +105,7 @@ class Source:
       if not self._controller.exists(task_id):
 
         # assign task to anonyous prole.
-        self._tasks.put_nowait((task_id, item))
+        self._tasks.put((task_id, item), block=True, timeout=self.timeout)
 
         # keep track of what we've done.
         self._controller.add(task_id)
@@ -128,7 +128,7 @@ class Source:
         self._table.insert(output)
         self._mailman(task_id, output)
         # sleep
-        gevent.sleep(0)
+        gevent.sleep(5)
 
   def _mailman(self, task_id, output):
 
@@ -154,18 +154,19 @@ class Source:
     """
     Run
     """
-    self._society()
-    #  # generate entities
-    #  for item in self.poller():
-    #
-    #    # generate id
-    #    task_id = self.task_id(item)
-    #
-    #    # efficiency, don't repeat tasks
-    #    if not self._controller.exists(task_id):
-    #      output = self.parser(task_id, item)
-    #	      # if it worked, send off data
-    #      if output:
-    #        # push to redisquue / sql / s3
-    #        self._table.insert(output)
-    #        self._mailman(task_id, output)
+    #self._society()
+    # generate entities
+    for item in self.poller():
+    
+      # generate id
+      task_id = self.task_id(item)
+  
+      # efficiency, don't repeat tasks
+      if not self._controller.exists(task_id):
+        output = self.parser(task_id, item)
+        # if it worked, send off data
+        if output:
+          # push to redisquue / sql / s3
+          self._table.insert(output)
+          self._mailman(task_id, output)
+
