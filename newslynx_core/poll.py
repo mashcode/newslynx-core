@@ -7,6 +7,7 @@ import gevent.monkey
 gevent.monkey.patch_all()
 
 from newslynx_core.fixtures.organizations import ORGANIZATIONS
+
 class Poll:
   """
   An abstract class for running parsers.
@@ -22,7 +23,7 @@ class Poll:
     """
     pass 
 
-  def parser(self, **kwargs):
+  def parser(self, kw):
     pass
 
   def _assign_tasks(self):

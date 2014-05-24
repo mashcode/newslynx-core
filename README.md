@@ -45,13 +45,15 @@ pip install boilerpipe
  - [x] `newslynx_core.social_media.facebook`
    * connecting to api
    * parsing facebook pages.
+   * parse facebook page stats
    * parsing facebook posts.
    * parsing facebook insights.
    * TODO authentication with other users credentials.
  - [x] `newslynx_core.social_media.twitter`
-   * search twitter
+   * parse twitter searches
    * parse lists
-   * parse users
+   * parse users timelines
+   * parse user stats
    * reading from streaming API
    * TODO authentication with other users credentials.
 - [x] `newslynx_core.homepage`
@@ -93,17 +95,122 @@ This queue will help power **pollster**, the approval river, and imapact recipes
 ** NOTE ** 
 Some feeds will not specifically associated with specific organizations, like `twitter-lists`.
 
-## Database Tables
+## SCHEMA:
+```
+  # ARTICLES
+  articles.org_id – String
+  articles.url – String
+  articles.domain – String
+  articles.simple_domain – String
+  articles.slug –  String
+  articles.hash – String
+  articles.meta_description – String
+  articles.meta_lang – String
+  articles.meta_favicon –     String
+  articles.img – String
+  articles.thumb – String
+  articles.text – String
+  articles.article_html –  String
+  articles.title – String
+  articles.pub_datetime – DateTime
+  articles.pub_date – Date 
+  articles.meta_keywords –  ARRAY(String)
+  articles.authors – ARRAY(String)
+  articles.int_links – ARRAY(String)
+  articles.ext_links – ARRAY(String)
+  articles.tags – ARRAY(String)
+  articles.keywords – ARRAY(String)
+  articles.img_urls – ARRAY(String)
+  articles.movies – ARRAY(String)
 
-### Articles
 
-### Google Alerts
+  # GALERTS
+  galerts.galert_id – String 
+  galerts.feed_url – String 
+  galerts.url – String 
+  galerts.title – String 
+  galerts.summary – String 
+  galerts.datetime – DateTime
 
-### Twitter Lists
+  # TWITTER
+  # Tweets
+  twitter.twitter_id –  String
+  twitter.org_id – String
+  twitter.query – String
+  twitter.list_name – String
+  twitter.list_owner – String
+  twitter.text – String
+  twitter.profile_img – String
+  twitter.screen_name – String
+  twitter.in_reply_to_status_id – String
+  twitter.in_reply_to_screen_name – String
+  twitter.datetime – DateTime
+  twitter.favorites – Numeric
+  twitter.followers – Numeric
+  twitter.friends – Numeric
+  twitter.retweets – Numeric
+  twitter.verified – Numeric
+  twitter.hashtags – ARRAY(String)
+  twitter.urls – ARRAY(String)
+  twitter.user_mentions –     ARRAY(String)
+  twitter.img_urls – ARRAY(String)
 
-### Twitter Streaming
+  #User Stats
+  twitter_user_stats.user_stats_id – String
+  twitter_user_stats.org_id – String
+  twitter_user_stats.datetime – DateTime
+  twitter_user_stats.screen_name – String
+  twitter_user_stats.favorites – Numeric
+  twitter_user_stats.followers – Numeric 
+  twitter_user_stats.friends – Numeric 
+  twitter_user_stats.listed – Numeric
+  twitter_user_stats.statuses – Numeric 
+  
+  # FACEBOOK
+  # Posts #
+  facebook_posts.org_id – String
+  facebook_posts.page_id – String
+  facebook_posts.post_id – String
+  facebook_posts.urls – ARRAY(String)
+  facebook_posts.datetime – DateTime
+  facebook_posts.message – String
+  facebook_posts.description – String
+  facebook_posts.status_type – String
+  facebook_posts.type – String
 
-### Facebook Pages
+  # Page Stats
+  facebook_page_stats.org_id –String
+  facebook_page_stats.page_stats_id –String
+  facebook_page_stats.page_id –String
+  facebook_page_stats.page_talking_about_count –Numeric
+  facebook_page_stats.page_likes –String
+  facebook_page_stats.datetime –DateTime
+  # TODO Explicit definitions for stats
+  
+  # Insights
+  facebook_insights.insights_id – String
+  facebook_insights.org_id – String
+  facebook_insights.page_id – String
+  facebook_insights.post_id – String
+  facebook_insights.datetime – DateTime
 
-### Homepages
+  # HOMEPAGES
+  homepages.homepage – String 
+  homepages.homepage_id – String 
+  homepages.org_id – String 
+  homepages.datetime – DateTime 
+  homepages.headline – String 
+  homepages.url – String
+  homepages.font_size – Numeric
+  homepages.x – Numeric
+  homepages.y – Numeric
+  homepages.x_bucket – Numeric 
+  homepages.y_bucket – Numeric
+  homepages.bucket – Numeric
+  homepages.has_img – Numeric
+  homepages.img_width – Numeric
+  homepages.img_height – Numeric
+  homepages.img_area – Numeric
+  homepages.img_src – String
+```
 
