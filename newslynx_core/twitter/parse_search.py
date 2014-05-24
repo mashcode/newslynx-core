@@ -44,10 +44,10 @@ class TwitterSearchParser(Source):
     data['query']= self.query
     return data
 
-  def messenger(self, output):
-    return {
-      'twitter_id': output['twitter_id']
-    }
+  # def messenger(self, output):
+  #   return {
+  #     'twitter_id': output['twitter_id']
+  #   }
 
 if __name__ == '__main__':
   tsp = TwitterSearchParser(query='propublica')

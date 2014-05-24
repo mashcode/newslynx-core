@@ -40,10 +40,10 @@ class FacebookPageParser(Source):
   def parser(self, task_id, post):
     return self.post_parser.parse(post)
 
-  def messnger(self, output):
-    return {
-      'post_id': output['post_id']
-    }
+  # def messnger(self, output):
+  #   return {
+  #     'post_id': output['post_id']
+  #   }
 
 if __name__ == '__main__':
   fbpp = FacebookPageParser(org_id='propublica', page_id='propublica')

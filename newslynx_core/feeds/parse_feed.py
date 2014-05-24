@@ -230,7 +230,7 @@ class FeedParser(Source):
 
     # test for valid urls:
     valid_urls = list(set([
-      u for u in candidates if not self._dup_article(u) and valid_url(u)
+      u for u in candidates if valid_url(u)
       ]))
     
     # if we have one or more, update entry_urls and return the first
@@ -240,7 +240,7 @@ class FeedParser(Source):
     # else, expand all candidates and filter out ones we've seen
     expanded_urls = list(set([ 
       u for u  in (unshorten_url(url=c, regex=self.short_regex) for c in candidates)
-        if not self._dup_article(u) and valid_url(u)
+        if valid_url(u)
       ]))
 
     # if we've found one or more return the first
@@ -308,10 +308,10 @@ class FeedParser(Source):
 
     return article.to_dict()
 
-  def messenger(self, output):
-    return {
-      'url': output['url'],
-    }
+  # def messenger(self, output):
+  #   return {
+  #     'url': output['url'],
+  #   }
 
 if __name__ == '__main__':
   feed_url = 'http://feeds.feedburner.com/publici_rss'

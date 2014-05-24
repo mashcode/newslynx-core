@@ -49,7 +49,7 @@ class StreamHandler(TwythonStreamer):
       output = self.func(data)
       self.controller.add(task_id)
       self._table.insert(output)
-      self.controller.pub(task_id)
+      self.controller.pub(task_id, output)
 
   def on_error(self, status_code, data):
     print status_code

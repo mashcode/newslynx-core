@@ -85,11 +85,7 @@ class Source:
     pass
 
   def messenger(self, output):
-    """
-    overwrite, output list of tuples of 
-    channel, data 
-    """
-    pass
+    return output
 
   def _capitalist(self):
     """
@@ -128,18 +124,18 @@ class Source:
         # submit output
         self._table.insert(output)
 
-        # clock out
-        self._mailman(output)
+        # push to redisqueue / s3
+        self._mailman(task_id, output)
 
         # sleep
         gevent.sleep(0)
 
-  def _mailman(self, output):
+  def _mailman(self, task_id, output):
 
     """
     Don't kill the messenger.
     """
-    self._controller.pub(self.messenger(output))
+    self._controller.pub(task_id, self.messenger(output))
 
   def _society(self):
     """

@@ -5,7 +5,9 @@ import json
 from datetime import datetime, date
 from uuid import UUID
 from decimal import Decimal
-
+import cStringIO 
+import StringIO
+import gzip
 
 class JSONEncoder(json.JSONEncoder):
   """ This encoder will serialize all entities that have a to_dict
@@ -43,3 +45,19 @@ def jsonify(obj, refs=False, encoder=JSONEncoder):
     data = encoder().encode(obj)
 
   return data 
+
+def un_gz(s):
+  fileobj = cStringIO.StringIO(s)
+  with gzip.GzipFile(fileobj=fileobj, mode="r") as f:
+    return f.read()
+
+def gz(s):
+  out = StringIO.StringIO()
+  with gzip.GzipFile(fileobj=out, mode="w") as f:
+    f.write(s)
+  return out.getvalue()
+
+def jsongzify(data):
+  s = jsonify(data)
+  return gz(s)
+

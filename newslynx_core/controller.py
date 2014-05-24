@@ -5,13 +5,18 @@
 A class for controlling and keeping track of pollers
 """
 import sys
+import os
 import redis
+from hashlib import sha1 
+from datetime import datetime
 
 from newslynx_core import settings
 from newslynx_core.parsers.serialization import jsonify
+from newslynx_core.s3.api import S3
 from newslynx_core.parsers.parse_date import (
   current_timestamp
   )
+
 #instaniate a connection pool
 pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
 
@@ -21,11 +26,19 @@ class Controller:
     self.source_type = kwargs.get('source_type')
     self.key = self._build_key()
     self.rdb = redis.StrictRedis(connection_pool = pool)
+    self.s3 = S3()
+    self.date_slug = datetime.now().date().strftime('%Y/%m/%d')
     self.expires = settings.SET_EXPIRES
     
-
   def _build_key(self):
     return "%s:%s" % (self.org_id, self.source_type)
+
+  def _date_slug(self):
+    return 
+
+  def _build_fp(self, task_id):
+    task_hash = sha1(task_id).hexdigest()
+    return os.path.join(self.org_id, self.source_type, self.date_slug, task_hash)
 
   def _now(self):
     return float(current_timestamp())
@@ -38,7 +51,9 @@ class Controller:
     # TODO: get sorted sets working
     # self.rdb.zadd(self.key, self._now(), task_id) 
 
-  def pub(self, data):
+  def pub(self, task_id, data):
+    fp = self._build_fp(task_id)
+    self.s3.put(fp, data)
     self.rdb.publish(self.key, jsonify(data))
 
 def lskeys():

@@ -119,7 +119,8 @@ def ensure_schema():
   facebook_page_stats.create_column('page_talking_about_count',Numeric)
   facebook_page_stats.create_column('page_likes',String)
   facebook_page_stats.create_column('datetime',DateTime)
-
+  # TODO Explicit definitions for stats
+  
   # Insights
   facebook_insights.create_column('insights_id', String)
   facebook_insights.create_column('org_id', String)
@@ -145,11 +146,6 @@ def ensure_schema():
   homepages.create_column('img_height', Numeric)
   homepages.create_column('img_area', Numeric)
   homepages.create_column('img_src', String)
-
-
-
-  # TODO Explicit definitions for stats
-
 
   # indices = {
   #}

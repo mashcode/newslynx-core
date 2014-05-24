@@ -84,14 +84,14 @@ class GAlertParser(Source):
 
       return data
 
-  def messenger(self, output):
-    """
-    overwrite, output list of tuples of 
-    channel, data 
-    """
-    return {
-      'url': output['url']
-    }
+  # def messenger(self, output):
+  #   """
+  #   overwrite, output list of tuples of 
+  #   channel, data 
+  #   """
+  #   return {
+  #     'url': output['url']
+  #   }
 
 if __name__ == '__main__':
   feed_url = 'http://www.google.com/alerts/feeds/14752688329844321840/4874425503898649357'
