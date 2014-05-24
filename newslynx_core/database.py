@@ -127,6 +127,26 @@ def ensure_schema():
   facebook_insights.create_column('post_id', String)
   facebook_insights.create_column('datetime', DateTime)
 
+  # HOMEPAGES
+  homepage.create_column('homepage' , String) 
+  homepage.create_column('homepage_id' , String) 
+  homepage.create_column('org_id', String) 
+  homepage.create_column('datetime', DateTime) 
+  homepage.create_column('headline' , String) 
+  homepage.create_column('url', String)
+  homepage.create_column('font_size' , Numeric)
+  homepage.create_column('x' , Numeric)
+  homepage.create_column('y' , Numeric)
+  homepage.create_column('x_bucket', Numeric) 
+  homepage.create_column('y_bucket', Numeric)
+  homepage.create_column('bucket', Numeric)
+  homepage.create_column('has_img', Numeric)
+  homepage.create_column('img_width', Numeric)
+  homepage.create_column('img_height', Numeric)
+  homepage.create_column('img_area', Numeric)
+  homepage.create_column('img_src', String)
+
+
 
   # TODO Explicit definitions for stats
 
