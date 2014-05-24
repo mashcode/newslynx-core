@@ -20,7 +20,6 @@ grequests==0.2.0
 jsonpath-rw==1.3.0
 kombu==3.0.16
 lxml==3.3.5
-newslynx-core==0.0.1
 newspaper==0.0.6
 nltk==2.0.4
 ply==3.4
