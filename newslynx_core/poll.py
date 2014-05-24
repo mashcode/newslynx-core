@@ -20,7 +20,7 @@ class Poll:
     self.organizations = ORGANIZATIONS
     self.db = db # TODO: hook up to database
     self.num_workers = kwargs.get('num_workers', 2)
-    self.timeout = kwargs.get('timeout', 800)
+    self.timeout = kwargs.get('timeout', 300)
     self.tasks = Queue()
 
   def get_tasks(self, query=None):

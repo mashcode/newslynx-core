@@ -46,7 +46,7 @@ class Source:
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
-    self.timeout = kwargs.get('timeout', 600)
+    self.timeout = kwargs.get('timeout', 300)
 
     # access datastores
     self._table = db[self.source_type]
@@ -120,16 +120,20 @@ class Source:
       task_id, item = self._tasks.get()
       
       # do it
-      output = self.parser(task_id, item)
-
+      try:
+      	output = self.parser(task_id, item)
+      except Exception as e:
+        print "ERROR", e
+        pass 
+      else:
       # if it worked, send off data
-      if output:
-        with gevent.Timeout(self.timeout, SourceTimeout) as to:
-          # push to redisquue / sql / s3
-          self._table.insert(output)
-          self._mailman(task_id, output)
-          # sleep
-          gevent.sleep(0.001)
+        if output:
+          with gevent.Timeout(self.timeout, SourceTimeout) as to:
+	    # push to redisquue / sql / s3
+            self._table.insert(output)
+            self._mailman(task_id, output)
+            # sleep
+            gevent.sleep(0.001)
 
   def _mailman(self, task_id, output):
 
