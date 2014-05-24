@@ -3,6 +3,9 @@
 # dependencies
 sudo su
 sudo apt-get update -y
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python2.7
 sudo apt-get install git python-pip python-dev node npm postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-dev -y
 pip install -I pillow
 updatedb
