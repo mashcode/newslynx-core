@@ -3,7 +3,7 @@
 # dependencies
 sudo su
 sudo apt-get update -y
-sudo apt-get install git python-pip python-dev postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-dev -y
+sudo apt-get install git python-pip python-dev node npm postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-dev -y
 pip install -I pillow
 updatedb
 

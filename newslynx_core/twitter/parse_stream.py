@@ -46,10 +46,15 @@ class StreamHandler(TwythonStreamer):
   def on_success(self, data):
     task_id = data['id_str']
     if not self.controller.exists(task_id):
-      output = self.func(data)
-      self.controller.add(task_id)
-      self._table.insert(output)
-      self.controller.pub(task_id, output)
+      try:
+        output = self.func(data)
+      except Exception as e:
+        print e
+        pass
+      else:
+        self.controller.add(task_id)
+        self._table.insert(output)
+        self.controller.pub(task_id, output)
 
   def on_error(self, status_code, data):
     print status_code
