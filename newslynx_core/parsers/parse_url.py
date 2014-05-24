@@ -477,7 +477,8 @@ re_short_domains = re.compile(r"""
   (^propub\.ca$)|
   (^feeds\.propublica\.org$)|
   (^ckbe\.at$)|
-  (^polti\.co$)
+  (^polti\.co$)|
+  (^pocket\.co$)
   """, flags=re.VERBOSE)
 
 def is_short_url(url, regex=None, test="any"):
@@ -505,14 +506,8 @@ def is_short_url(url, regex=None, test="any"):
 @retry(retry_on_result=is_short_url, stop_max_delay=settings.UNSHORTEN_TIMEOUT)
 def unshorten_url(url):
   try:
-    r = requests.get(
-    'http://api.longurl.org/v2/expand',
-    params = {
-      'url'    :  url,
-      'format' : 'json'
-      }
-    )
-    return r.json().get('long-url', url)
+    r = requests.get(url)
+    return r.url
   except:
     return url
 
