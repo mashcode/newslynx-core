@@ -6,8 +6,7 @@ sudo apt-get update -y
 sudo add-apt-repository ppa:fkrull/deadsnakes
 sudo apt-get update
 sudo apt-get install python2.7
-sudo apt-get install git python-pip python-dev node npm postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-dev -y
-pip install -I pillow
+sudo apt-get install git python-pip python-dev node npm postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-devs libfontconfig -y
 updatedb
 
 # redis
@@ -19,7 +18,13 @@ make
 cd ..
 rm -rf redis-stable
 sudo apt-get install redis-tools redis-server -y
-service redis-server start
+
+# phantom js
+sudo wget https://phantomjs.googlecode.com/files/phantomjs-1.9.0-linux-x86_64.tar.bz2
+tar xjf phantomjs-1.9.0-linux-x86_64.tar.bz2
+cd phantomjs-1.9.0-linux-x86_64/bin/
+mv phantomjs /usr/bin/phantomjs
+chmod 777 /usr/bin/phantomjs
 
 # build postgres database
 echo "build a database with:"
