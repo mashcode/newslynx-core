@@ -41,8 +41,7 @@ class Poll:
   def _exec_tasks(self):
     while not self.tasks.empty():
       task = self.tasks.get()
-      with gevent.Timeout(self.timeout, PollTimeout) as to:
-        self.exec_task(task)
+      self.exec_task(task)
       gevent.sleep(0)
 
   def run(self):

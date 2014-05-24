@@ -120,19 +120,15 @@ class Source:
       task_id, item = self._tasks.get()
       
       # do it
-      try:
-      	output = self.parser(task_id, item)
-      except Exception as e:
-        print "ERROR", e
-        pass 
-      else:
+      output = self.parser(task_id, item)
+
       # if it worked, send off data
-        if output:
-          # push to redisquue / sql / s3
-          self._table.insert(output)
-          self._mailman(task_id, output)
-          # sleep
-          gevent.sleep(0)
+      if output:
+        # push to redisquue / sql / s3
+        self._table.insert(output)
+        self._mailman(task_id, output)
+        # sleep
+        gevent.sleep(0)
 
   def _mailman(self, task_id, output):
 
