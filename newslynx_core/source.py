@@ -89,7 +89,7 @@ class Source:
     pass
 
   def messenger(self, output):
-    return output
+    pass
 
   def _capitalist(self):
     """
@@ -154,17 +154,18 @@ class Source:
     """
     Run
     """
-    # generate entities
-    for item in self.poller():
-
-      # generate id
-      task_id = self.task_id(item)
-
-      # efficiency, don't repeat tasks
-      if not self._controller.exists(task_id):
-        output = self.parser(task_id, item)
-	      # if it worked, send off data
-        if output:
-          # push to redisquue / sql / s3
-          self._table.insert(output)
-          self._mailman(task_id, output)
+    self._society()
+    #  # generate entities
+    #  for item in self.poller():
+    #
+    #    # generate id
+    #    task_id = self.task_id(item)
+    #
+    #    # efficiency, don't repeat tasks
+    #    if not self._controller.exists(task_id):
+    #      output = self.parser(task_id, item)
+    #	      # if it worked, send off data
+    #      if output:
+    #        # push to redisquue / sql / s3
+    #        self._table.insert(output)
+    #        self._mailman(task_id, output)
