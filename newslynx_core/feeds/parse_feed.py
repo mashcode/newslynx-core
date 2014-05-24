@@ -298,10 +298,10 @@ class FeedParser(Source):
 
     return article.to_dict()
 
-  # def messenger(self, output):
-  #   return {
-  #     'url': output['url'],
-  #   }
+  def messenger(self, output):
+    return {
+      'url': output['url'],
+    }
 
 if __name__ == '__main__':
   feed_url = 'http://feeds.feedburner.com/publici_rss'

@@ -17,6 +17,7 @@ class articles(Poll):
             'org_id': o['org_id'],
             'domain': o['domain']
           }
+          print task
           yield task 
 
   def exec_task(self, task):
