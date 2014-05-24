@@ -16,6 +16,7 @@ class facebook_page_stats(Poll):
             'org_id': o['org_id'],
             'page_id': page_id
           }
+          print task
           yield task 
 
   def exec_task(self, task):
