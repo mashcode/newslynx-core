@@ -10,6 +10,7 @@ import redis
 from hashlib import sha1 
 from datetime import datetime
 import gevent 
+import gevent.monkey
 gevent.monkey.patch_socket()
 gevent.monkey.patch_ssl()
 
