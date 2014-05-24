@@ -30,9 +30,6 @@ from newslynx_core.parsers.parse_url import (
   )
 from newslynx_core import settings 
 
-# set the socket timeout
-socket.setdefaulttimeout(20)
-
 class HomepageParserInitError(Exception):
   pass
 
