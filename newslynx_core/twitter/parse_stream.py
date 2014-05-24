@@ -76,6 +76,7 @@ class TwitterStreamParser:
       )
 
 if __name__ == '__main__':
+  
   ts = TwitterStreamParser(terms=[
     'propublica org', 'propub ca', 'ny chalkbeat org', 'tn chalkbeat org',
     'motherjones com', 'mojo ly', 'co chalkbeat org', 'invw org', 
