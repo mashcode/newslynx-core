@@ -7,4 +7,4 @@
 20,50 * * * * * nlc homepages
 24,54 * * * * * nlc facebook_page_stats
 28,58 * * * * * nlc facebook_pages
-@reboot /usr/local/bin/forever start /nlc twitter_stream
+@reboot /usr/local/bin/forever start -c "nlc twitter_stream"
