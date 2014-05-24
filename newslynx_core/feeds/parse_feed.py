@@ -167,10 +167,11 @@ class FeedParser(Source):
 
     return list(authors)
 
+  # remove image extraction for now
   def get_imgs(self, entry):
     img_urls = self.get_candidates(entry, IMG_CANDIDATE_JSONPATH)
-    img_url, img, thumb = self.image_extract.get_top_img(img_urls)
-    return img_urls, img_url, img, thumb
+    # img_url, img, thumb = self.image_extract.get_top_img(img_urls)
+    return img_urls, None, None, None
   
   def get_article_html(self, entry):
     """

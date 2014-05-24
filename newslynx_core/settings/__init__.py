@@ -59,7 +59,7 @@ NEWSPAPER_CONFIG = newspaper.Config()
 NEWSPAPER_CONFIG.browser_user_agent = USER_AGENT
 NEWSPAPER_CONFIG.request_timeout = REQUEST_TIMEOUT
 NEWSPAPER_CONFIG.keep_article_html = True
-NEWSPAPER_CONFIG.fetch_images = True
+NEWSPAPER_CONFIG.fetch_images = False
 NEWSPAPER_CONFIG.MIN_WORD_COUNT = 200
 
 # url settings
