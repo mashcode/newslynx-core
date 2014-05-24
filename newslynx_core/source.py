@@ -81,8 +81,7 @@ class Source:
     overwrite
     """
     pass
-  
-  @retry
+ 
   def parser(self, task_id, item):
     """
     overwrite
