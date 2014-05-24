@@ -13,11 +13,15 @@ from retrying import retry
 from newslynx_core.controller import Controller
 from newslynx_core.database import db
 from newslynx_core import settings
+from random import choice
 
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
+
+def random_sleep():
+  return choice([i/100. for i in range(50,100, 1)])
 
 class SourceInitError(Exception):
   pass
@@ -128,14 +132,14 @@ class Source:
         self._table.insert(output)
         self._mailman(task_id, output)
         # sleep
-        gevent.sleep(5)
+        gevent.sleep(0.1)
 
   def _mailman(self, task_id, output):
 
     """
     Don't kill the messenger.
     """
-    self._controller.pub(task_id, self.messenger(output))
+    self._controller.pub(task_id, output)
 
   def _society(self):
     """
@@ -154,7 +158,9 @@ class Source:
     """
     Run
     """
-    #self._society()
+    self._society()
+    
+  def debug(self):
     # generate entities
     for item in self.poller():
     

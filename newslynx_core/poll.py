@@ -3,12 +3,16 @@
 
 from newslynx_core.fixtures.organizations import ORGANIZATIONS
 from newslynx_core.database import db 
+from random import choice 
 
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all(thread=False)
 
+
+def random_sleep():
+   return choice([i/100. for i in range(50,100, 1)])
 
 class PollTimeout(Exception):
   pass
@@ -36,22 +40,22 @@ class Poll:
 
   def _get_tasks(self):
     for task in self.get_tasks():
-      self.tasks.put(task, block=False, timeout=self.timeout)
+      self.tasks.put_nowait(task)
 
   def _exec_tasks(self):
     while not self.tasks.empty():
       task = self.tasks.get()
       self.exec_task(task)
-      gevent.sleep(1)
+      gevent.sleep(random_sleep())
 
-  def gvnt(self):
+  def run(self):
     gevent.spawn(self._get_tasks).join()
     gevent.joinall([
         gevent.spawn(self._exec_tasks) 
           for w in xrange(self.num_workers)
     ])
 
-  def run(self):
+  def debug(self):
     for task in self.get_tasks():
       self.exec_task(task)
 

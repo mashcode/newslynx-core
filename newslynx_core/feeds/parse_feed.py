@@ -113,7 +113,6 @@ class FeedParser(Source):
     self.url_extract     = URLExtractor(domain = self.domain)
         
     # gevent
-    self.tasks = Queue()
 
   # HELPERS #
 
@@ -141,7 +140,6 @@ class FeedParser(Source):
 
     return list(candidates)
 
-
   def get_date(self, obj):
     """
     return earliest time of candidates or current time.
@@ -152,7 +150,6 @@ class FeedParser(Source):
     else:
       return current_local_datetime(self.timezone)
 
-  
   def get_authors(self, entry):
     """
     return all candidates, and parse unique
@@ -170,8 +167,8 @@ class FeedParser(Source):
   # remove image extraction for now
   def get_imgs(self, entry):
     img_urls = self.get_candidates(entry, IMG_CANDIDATE_JSONPATH)
-    # img_url, img, thumb = self.image_extract.get_top_img(img_urls)
-    return img_urls, None, None, None
+    img_url, img, thumb = self.image_extract.get_top_img(img_urls)
+    return img_urls, img_url, img, thumb
   
   def get_article_html(self, entry):
     """
@@ -261,7 +258,6 @@ class FeedParser(Source):
     Parse an entry into an Article and 
     merge data with Article Extraction
     """
-    print url
     if url:
       # initialize an article object
       article = Article(url = url, org_id=self.org_id)
@@ -297,7 +293,7 @@ class FeedParser(Source):
 
       if np_article:
         article = article.from_newspaper( np_article, merge=True)
-      print article.to_json()
+      #print article.to_json()
       return article.to_dict()
 
   def messenger(self, output):

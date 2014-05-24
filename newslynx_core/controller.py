@@ -57,9 +57,9 @@ class Controller:
 
   def pub(self, task_id, data):
     pass
-    #fp = self._build_fp(task_id)
-    #self.s3.put(fp, data),
-    # self.rdb.publish( self.key, jsonify(data))
+    fp = self._build_fp(task_id)
+    self.s3.put(fp, data),
+    self.rdb.publish( self.key, jsonify(data))
 
 def lskeys():
   c = Controller(org_id = "", source_type = "")
