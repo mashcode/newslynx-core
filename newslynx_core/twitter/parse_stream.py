@@ -26,7 +26,7 @@ See the table below for more examples related to this issue.
 # generic tweet parser as default
 _twp = TweetParser()
 
-class _TwitterStreamHandler(TwythonStreamer):
+class StreamHandler(TwythonStreamer):
   def __init__(self, **kwargs):
     
     TwythonStreamer.__init__(
@@ -59,14 +59,7 @@ class TwitterStreamParserInitError(Exception):
 
 class TwitterStreamParser:
   def __init__(self, **kwargs):
-    for k in ['api_key', 'api_secret', 'access_token', 'access_secret', 'func']:
-      if k not in kwargs:
-        raise TwitterStreamParserInitError(
-          'TwitterStreamParser requires api_key' 
-          'api_secret, access_token, access_secret'
-          'and func to run'
-          )
-    self.stream = _TwitterStreamHandler(
+    self.stream = StreamHandler(
       api_key = kwargs.get('api_key', settings.TWT_API_KEY), 
       api_secret = kwargs.get('api_secret', settings.TWT_API_SECRET),
       access_token = kwargs.get('access_token', settings.TWT_ACCESS_TOKEN),
@@ -86,7 +79,7 @@ if __name__ == '__main__':
   ts = TwitterStreamParser(terms=[
     'propublica org', 'propub ca', 'ny chalkbeat org', 'tn chalkbeat org',
     'motherjones com', 'mojo ly', 'co chalkbeat org', 'invw org', 
-    'ckbe at', 'in chalkbeat org', 'publicintegrity org'
+    'ckbe at', 'in chalkbeat org', 'publicintegrity org', 'hello'
     ])
   print ts.run()
   
