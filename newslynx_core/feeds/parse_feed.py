@@ -261,43 +261,44 @@ class FeedParser(Source):
     Parse an entry into an Article and 
     merge data with Article Extraction
     """
-
-    # initialize an article object
-    article = Article(url = url, org_id=self.org_id)
+    print url
+    if url:
+      # initialize an article object
+      article = Article(url = url, org_id=self.org_id)
     
-    # get image
-    img_urls, img_url, img, thumb = self.get_imgs( entry )
+      # get image
+      img_urls, img_url, img, thumb = self.get_imgs( entry )
 
-    # get html
-    article_html = self.get_article_html( entry )
+      # get html
+      article_html = self.get_article_html( entry )
 
-    int_links, ext_links = self.get_urls(article_html)
+      int_links, ext_links = self.get_urls(article_html)
 
-    # get title
-    title = self.get_title( entry )
+      # get title
+      title = self.get_title( entry )
     
-    # set values 
-    article.set_article_html(   article_html )
-    article.set_text(           self.get_text( article_html ) )
-    article.set_title(          title)
-    article.set_int_links(      int_links)
-    article.set_ext_links(      ext_links)
-    article.set_tags(           self.get_tags( entry ) )
-    article.set_authors(        self.get_authors( entry ) )
-    article.set_dates(          self.get_date( entry ) )
-    article.set_img_urls(       img_urls )
-    article.set_img(            img )
-    article.set_thumb(          thumb )
+      # set values 
+      article.set_article_html(   article_html )
+      article.set_text(           self.get_text( article_html ) )
+      article.set_title(          title)
+      article.set_int_links(      int_links)
+      article.set_ext_links(      ext_links)
+      article.set_tags(           self.get_tags( entry ) )
+      article.set_authors(        self.get_authors( entry ) )
+      article.set_dates(          self.get_date( entry ) )
+      article.set_img_urls(       img_urls )
+      article.set_img(            img )
+      article.set_thumb(          thumb )
     
-    # get article extraction and merge
-    np_article = self.article_extract.extract( 
-      url = url, org_id = self.org_id 
+      # get article extraction and merge
+      np_article = self.article_extract.extract( 
+        url = url, org_id = self.org_id 
       )
 
-    if np_article:
-      article = article.from_newspaper( np_article, merge=True)
-
-    return article.to_dict()
+      if np_article:
+        article = article.from_newspaper( np_article, merge=True)
+      print article.to_json()
+      return article.to_dict()
 
   def messenger(self, output):
     return {

@@ -30,7 +30,7 @@ def articles():
 
 @poll.command()
 def facebook_page_stats():
-  facebook_page_stats
+  tasks.facebook_page_stats().run()
 
 @poll.command()
 def facebook_pages():
