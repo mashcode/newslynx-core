@@ -56,10 +56,10 @@ class FacebookInsightsParser(Source):
 
     return insights
 
-  # def messenger(self, output):
-  #   return {
-  #     'insights_id': output['insights_id']
-  #   }
+  def messenger(self, output):
+    return {
+      'insights_id': output['insights_id']
+    }
 
 if __name__ == '__main__':
   fbis = FacebookInsightsParser(org_id = 'newslynx', page_id = 'me')

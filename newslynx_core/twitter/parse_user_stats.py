@@ -43,10 +43,10 @@ class TwitterUserStatsParser(Source):
     data['statuses'] = user.get('statuses_count', None)
     return data
 
-  # def messenger(self, output):
-  #   return {
-  #     'user_stats_id': output['user_stats_id']
-  #   }
+  def messenger(self, output):
+    return {
+      'user_stats_id': output['user_stats_id']
+    }
 
 if __name__ == '__main__':
   tusp = TwitterUserStatsParser(org_id = 'propublica', screen_name = 'propublica')
