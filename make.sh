@@ -1,8 +1,22 @@
 #!/bin/sh
+
+# dependencies
 sudo su
 sudo apt-get update -y
-sudo apt-get install git python-pip python-dev postgresql libpq-dev postgresql-contrib libxml2-dev libxslt1-dev -y
+sudo apt-get install git python-pip python-dev postgresql libpq-dev libjpeg-dev postgresql-contrib libxml2-dev libxslt1-dev -y
+pip install -I pillow
 updatedb
+
+# redis
+cd /tmp
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+cd ..
+rm -rf redis-stable
+sudo apt-get install redis-tools redis-server -y
+service redis-server start
 
 # build postgres database
 echo "build a database with:"
