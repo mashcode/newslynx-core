@@ -7,6 +7,7 @@ from newslynx_core.source import Source
 from newslynx_core.facebook.api import connect 
 
 class FacebookPageStatsInitError(Exception):
+  pass
 
 class FacebookPageStats(Source):
   def __init__(self, **kwargs):
@@ -44,5 +45,5 @@ class FacebookPageStats(Source):
 
 if __name__ == '__main__':
   fbps = FacebookPageStats(org_id='propublica', page_id='propublica')
-  print fbps.run()
+  fbps.run()
 

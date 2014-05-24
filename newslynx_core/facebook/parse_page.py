@@ -22,7 +22,7 @@ class FacebookPageParser(Source):
       )
     self.api = connect()
     self.page_id = kwargs.get('page_id')
-    self.limit = kwargs.get('limit', 10)
+    self.limit = kwargs.get('limit', 200)
     self.post_parser = FacebookPostParser(
       org_id = kwargs.get('org_id'),
       page_id = self.page_id,
