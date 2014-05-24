@@ -4,8 +4,7 @@
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
-gevent.monkey.patch_socket()
-gevent.monkey.patch_ssl()
+gevent.monkey.patch_all(thread=False)
 
 from newslynx_core.fixtures.organizations import ORGANIZATIONS
 from newslynx_core.database import db 
