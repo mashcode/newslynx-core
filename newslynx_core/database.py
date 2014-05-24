@@ -20,6 +20,10 @@ facebook_page_stats = db['facebook_page_stats']
 facebook_insights = db['facebook_insights']
 homepages = db['homepages']
 
+def create_index(table, column):
+  idx = "idx_%s_%s" % (table, column)
+  q = """CREATE INDEX %s ON %s (%s);""" % (idx, table, column)
+  db.query(q)
 
 def generate_schema():
 
@@ -107,13 +111,14 @@ def generate_schema():
   facebook_insights.create_column('page_id', String)
   facebook_insights.create_column('post_id', String)
   facebook_insights.create_column('datetime', DateTime)
+  # TODO Explicit definitions for stats
 
 
-  # create_indices = [
-  # ]
-  # for c_idx in create_indices:
+  # indices = {
+  #}
+  # for k,v in indices:
   #   try:
-  #     db.query(c_idx)
+  #     create_index(k, v)
   #   except ProgrammingError:
   #     continue
 

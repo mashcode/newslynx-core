@@ -476,7 +476,8 @@ re_short_domains = re.compile(r"""
   (^mojo\.ly$)|
   (^propub\.ca$)|
   (^feeds\.propublica\.org$)|
-  (^ckbe\.at$)
+  (^ckbe\.at$)|
+  (^polti\.co$)
   """, flags=re.VERBOSE)
 
 def is_short_url(url, regex=None, test="any"):
