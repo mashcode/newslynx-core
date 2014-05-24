@@ -28,11 +28,6 @@ def manage(ctx):
 def articles():
   tasks.articles().run()
 
-
-@poll.command()
-def articles():
-  tasks.articles().run()
-
 @poll.command()
 def facebook_page_stats():
   facebook_page_stats
