@@ -15,8 +15,9 @@ requests_log.setLevel(logging.ERROR)
 DATABASE_URL = os.getenv('NEWSLYNX_DB_URL')
 
 # Facebook API
-FB_APP_IP = os.getenv('NEWSLYNX_FB_APP_ID')
+FB_APP_ID = os.getenv('NEWSLYNX_FB_APP_ID')
 FB_APP_SECRET = os.getenv('NEWSLYNX_FB_APP_SECRET')
+FB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S+0000"
 
 # Twitter API
 TWT_API_KEY = os.getenv('NEWSLYNX_TWT_API_KEY')

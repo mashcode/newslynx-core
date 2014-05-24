@@ -42,15 +42,20 @@ pip install boilerpipe
   * Uses `Contoller` to determine what to poll when.
  - [x] `newslynx_core.feeds.parse_feed.FeedParser`
  - [x] `newslynx_core.alerts.parse_galert.GAlertParser`
- - [ ] `newslynx_core.social_media.facebook.Facebook`
-   * parsing facebook posts
- - [ ] `newslynx_core.social_media.twitter.Twitter`
+ - [x] `newslynx_core.social_media.facebook`
+   * connecting to api
+   * parsing facebook pages.
+   * parsing facebook posts.
+   * parsing facebook insights.
+   * TODO authentication with other users credentials.
+ - [ ] `newslynx_core.social_media.twitter`
    * search twitter
-   * build lists
    * parse lists
    * parse users
    * reading from streaming API (one set method, polls all org domains and shortlinks and checks for valid urls)
-- [ ] `Homepage`, detect what aritcle links are on each organization's homepage, when.
+   * TODO authentication with other users credentials.
+- [ ] `newslynx_core.homepage`
+  * detect what aritcle links are on each organization's homepage, when.
 - [ ] Figure out this stupid debug message:
 ```
 Exception KeyError: KeyError(4322285680,) in <module 'threading' from '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.pyc'> ignored

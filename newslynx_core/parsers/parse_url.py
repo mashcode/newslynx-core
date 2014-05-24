@@ -66,6 +66,19 @@ re_html = re.compile(r'(index\.)?htm(l)?$')
 re_www = re.compile(r'^www\.')
 re_slug = re.compile(r'[^\sA-Za-z]+')
 re_slug_end = re.compile(r'(^[\-]+)|([\-]+)$')
+re_urls = re.compile(r'https?://[^\s\'\"]+')
+re_short_urls = re.compile(r'(https?://)?([a-z]+.[a-z]+/[^\s\'\"]+)')
+
+def extract_urls(string):
+    """
+    get urls from input string
+    """
+    urls = re_urls.findall(string)
+    short_urls = [
+      i+j if i!='' else 'http://'+j 
+        for i,j in re_short_urls.findall(string)
+        ]
+    return list(set(urls + short_urls))
 
 def remove_args(url, keep_params=(), frags=False):
   """
@@ -239,7 +252,6 @@ def valid_url(
     bad_regex  =  None, 
     good_test  = 'any', 
     bad_test   = 'all', 
-    verbose    =  False, 
     test       =  False
   ):
   """
@@ -295,14 +307,12 @@ def valid_url(
 
   # 11 chars is shortest valid url length, eg: http://x.co
   if url is None or len(url) < 11:
-    if verbose: print '\t%s rejected because len of url is less than 11' % url
     return False
 
   r1 = ('mailto:' in url) # TODO not sure if these rules are redundant
   r2 = ('http://' not in url) and ('https://' not in url)
 
   if r1 or r2:
-    if verbose: print '\t%s rejected because len of url structure' % url
     return False
 
   path = urlparse(url).path
@@ -324,7 +334,6 @@ def valid_url(
 
     # if the file type is a media type, reject instantly
     if file_type and file_type not in ALLOWED_TYPES:
-      if verbose: print '\t%s rejected due to bad filetype' % url
       return False
 
     last_chunk = path_chunks[-1].split('.')
@@ -344,7 +353,6 @@ def valid_url(
   url_slug = path_chunks[-1] if path_chunks else u''
 
   if tld in BAD_DOMAINS:
-    if verbose: print '%s caught for a bad tld' % url
     return False
 
   if len(path_chunks) == 0:
@@ -358,39 +366,32 @@ def valid_url(
 
     if dash_count >= underscore_count:
       if tld not in [ x.lower() for x in url_slug.split('-') ]:
-        if verbose: print '%s verified for being a slug' % url
         return True
 
     if underscore_count > dash_count:
       if tld not in [ x.lower() for x in url_slug.split('_') ]:
-        if verbose: print '%s verified for being a slug' % url
         return True
 
   # There must be at least 2 subpaths
   if len(path_chunks) <= 1:
-    if verbose: print '%s caught for path chunks too small' % url
     return False
 
   # Check for subdomain & path red flags
   # Eg: http://cnn.com/careers.html or careers.cnn.com --> BAD
   for b in BAD_CHUNKS:
     if b in path_chunks or b == subd:
-      if verbose: print '%s caught for bad chunks' % url
       return False
 
   match_date = date_regex.search(url)
 
   # if we caught the verified date above, it's an article
   if match_date:
-    if verbose: print '%s verified for date' % url
     return True
 
   for GOOD in GOOD_PATHS:
     if GOOD.lower() in [p.lower() for p in path_chunks]:
-      if verbose: print '%s verified for good path' % url
       return True
 
-  if verbose: print '%s caught for default false' % url
   return False
 
 # SHORT DOMAINS #
@@ -487,9 +488,14 @@ def is_short_url(url, regex=None, test="any"):
   # pass in specific regexes
   domain  = get_domain(url)
   if regex:
-    return match_regex(regex=regex, s=domain, test=test)
+    # only return if we match the custom domain, never fail
+    # because of this
+    custom_domain = match_regex(regex=regex, s=domain, test=test)
+    if custom_domain:
+      return True
 
-  elif re_short_domains.search(domain):
+  # test against known short links
+  if re_short_domains.search(domain):
     return True
     
   else:

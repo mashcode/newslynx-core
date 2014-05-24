@@ -35,7 +35,7 @@ class Source:
        'source_type' not in kwargs:
 
       raise SourceInitError(
-        'FeedParser requires a feed_url, org_id, and domain'
+        'A Source requires an org_id and source_type'
         'in order to run.'
       )
       
