@@ -46,7 +46,7 @@ class Source:
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
-    self.timeout = kwargs.get('timeout', 300)
+    self.timeout = kwargs.get('timeout', 10)
 
     # access datastores
     self._table = db[self.source_type]
