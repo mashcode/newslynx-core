@@ -6,6 +6,8 @@ from newslynx_core.parsers.parse_url import (
   url_to_slug, get_domain, get_simple_domain,
   valid_url
   )
+from newslynx_core import settings
+from datetime import datetime
 
 # mapping of tweet schema to newslynx schema
 # via jsonpath
@@ -42,7 +44,7 @@ class TweetParser:
     return list(urls)
 
   def get_datetime(self, tweet):
-    pass
+    return datetime.strptime(tweet['created_at'], settings.TWT_DATE_FORMAT)
 
   def get_hashtags(self, e):
     hashtags = set()
@@ -86,6 +88,7 @@ class TweetParser:
       'twitter_id': tweet.get('id_str', None),
       'text': tweet.get('text', '').encode('utf-8'),
       'retweets': tweet.get('retweet_count', 0),
+      'datetime': self.get_datetime(tweet),
       'favorites': tweet.get('favorites_count', 0),
       'in_reply_to_screen_name': tweet.get('in_reply_to_screen_name'),
       'in_reply_to_status_id': tweet.get('in_reply_to_status_id_str')
