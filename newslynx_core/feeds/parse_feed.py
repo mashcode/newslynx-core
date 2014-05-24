@@ -237,16 +237,6 @@ class FeedParser(Source):
     if len(valid_urls) >= 1:
       return valid_urls[0]
 
-    # else, expand all candidates and filter out ones we've seen
-    expanded_urls = list(set([ 
-      u for u  in (unshorten_url(url=c, regex=self.short_regex) for c in candidates)
-        if valid_url(u)
-      ]))
-
-    # if we've found one or more return the first
-    if len(expanded_urls) >= 1:
-      return expanded_urls[0]
-
     # if we STILL haven't found anything, just
     # return the first candidate:
     return candidates[0]
