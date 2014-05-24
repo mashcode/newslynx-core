@@ -71,7 +71,7 @@ def ensure_schema():
   twitter.create_column('twitter_id',        String)
   twitter.create_column('org_id',            String)
   twitter.create_column('query',             String)
-  twitter.create_column('list_slug',         String)
+  twitter.create_column('list_name',         String)
   twitter.create_column('list_owner',        String)
   twitter.create_column('text',              String)
   twitter.create_column('profile_img',       String)
