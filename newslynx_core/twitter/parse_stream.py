@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from twython import TwythonStreamer
 import twython
 
@@ -8,7 +11,6 @@ from newslynx_core.controller import Controller
 from newslynx_core.database import db 
 from newslynx_core import settings
 
-from pprint import pprint
 """
 FROM 
 
@@ -52,7 +54,7 @@ class StreamHandler(TwythonStreamer):
   def on_error(self, status_code, data):
     print status_code
 
-class TwitterStream:
+class TwitterStreamParser:
   def __init__(self, **kwargs):
     self.stream = StreamHandler(
       api_key = kwargs.get('api_key', settings.TWT_API_KEY), 
@@ -71,7 +73,7 @@ class TwitterStream:
       )
 
 if __name__ == '__main__':
-  ts = TwitterStream(terms=[
+  ts = TwitterStreamParser(terms=[
     'propublica org', 'propub ca', 'ny chalkbeat org', 'tn chalkbeat org',
     'motherjones com', 'mojo ly', 'co chalkbeat org', 'invw org', 
     'ckbe at', 'in chalkbeat org', 'publicintegrity org', 'yo'

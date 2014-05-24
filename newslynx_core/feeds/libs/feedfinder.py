@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """feedfinder: Find the Web feed for a Web page
 http://www.aaronsw.com/2002/feedfinder/
 

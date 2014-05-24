@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 An example of a pubsub listener, for testing. Will be folded into 
 `newlsnyx-queue`

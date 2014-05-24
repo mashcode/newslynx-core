@@ -5,8 +5,7 @@ from newslynx_core.parsers.serialization import jsonify
 from newslynx_core.parsers.parse_url import (
   prepare_url, get_domain, url_to_slug, url_to_hash, 
   reconcile_embed_url, get_simple_domain
-  )
-from pprint import pprint 
+  ) 
 
 class ArticleInitError(Exception):
   pass

@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from datetime import datetime 
 
 from newslynx_core.source import Source 
 from newslynx_core.facebook.api import connect 
-
 
 class FacebookPageStatsInitError(Exception):
 

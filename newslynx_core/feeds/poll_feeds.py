@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import gevent
 from gevent.queue import Queue
 import gevent.monkey

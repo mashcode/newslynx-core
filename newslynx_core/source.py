@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
 An abstract class for performing polling a feed of data.
 Built in functionality for checking whether
