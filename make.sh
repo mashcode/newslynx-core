@@ -1,7 +1,7 @@
 #!/bin/sh
 sudo su
 sudo apt-get update -y
-sudo apt-get install git python-pip postgresql postgresql-contrib -y
+sudo apt-get install git python-pip python-dev postgresql libpq-dev postgresql-contrib libxml2-dev libxslt1-dev -y
 updatedb
 
 # build postgres database

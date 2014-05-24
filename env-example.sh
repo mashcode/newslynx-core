@@ -1,6 +1,6 @@
 export MANTA_URL=https://us-east.manta.joyent.com 
 export MANTA_USER=newslynx 
-export MANTA_KEY_ID=ca:37:20:91:36:8c:ce:c6:7b:b3:e8:c1:db:f8:66:a0
+export MANTA_KEY_ID=''
 
 export NEWSLYNX_FB_APP_ID=''
 export NEWSLYNX_FB_APP_SECRET=''
