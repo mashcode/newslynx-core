@@ -91,7 +91,6 @@ class Source:
     """
     pass
 
-
   def _capitalist(self):
     """
     Owns the means of production

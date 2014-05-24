@@ -48,11 +48,11 @@ pip install boilerpipe
    * parsing facebook posts.
    * parsing facebook insights.
    * TODO authentication with other users credentials.
- - [ ] `newslynx_core.social_media.twitter`
+ - [x] `newslynx_core.social_media.twitter`
    * search twitter
    * parse lists
    * parse users
-   * reading from streaming API (one set method, polls all org domains and shortlinks and checks for valid urls)
+   * reading from streaming API
    * TODO authentication with other users credentials.
 - [ ] `newslynx_core.homepage`
   * detect what aritcle links are on each organization's homepage, when.
