@@ -13,7 +13,6 @@ import gevent
 from gevent.queue import Queue
 import gevent.monkey
 gevent.monkey.patch_all()
-gevent.monkey.patch_thread()
 
 from newslynx_core.controller import Controller
 from newslynx_core.database import db
@@ -120,12 +119,13 @@ class Source:
 
       # if it worked, send off data
       if output:
-        
-        # submit output
-        self._table.insert(output)
 
-        # push to redisqueue / s3
-        self._mailman(task_id, output)
+        # push to redisquue / sql / s3
+        threads = [
+          gevent.spawn(self._table.insert, output),
+          gevent.spawn(self._mailman, task_id, output)
+          ]
+        gevent.joinall(threads)
 
         # sleep
         gevent.sleep(0)

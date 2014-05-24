@@ -20,7 +20,7 @@ from newslynx_core.facebook.parse_page import FacebookPageParser
 fbpp = FacebookPageParser(org_id='propublica', page_id='propublica')
 fbpp.run()
 
-print "TESTING FACEBBOOK PAGE PARSING ..."
+print "TESTING FACEBBOOK PAGE STATS PARSING ..."
 from newslynx_core.facebook.parse_page_stats import FacebookPageStats
 fbpp = FacebookPageStats(org_id='propublica', page_id='propublica')
 fbpp.run()

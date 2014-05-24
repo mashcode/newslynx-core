@@ -1,2 +1,2 @@
 #!/bin/sh
-python tests/test.py
+time python tests/test.py
