@@ -186,7 +186,7 @@ class HomepageParser(Source):
       img_dict.items() + 
       bucket_dict.items()
       )          
-    print data
+
     # return data
     return data
 
