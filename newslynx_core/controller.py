@@ -10,8 +10,8 @@ import redis
 from hashlib import sha1 
 from datetime import datetime
 import gevent 
-import gevent.monkey
-gevent.monkey.patch_all()
+gevent.monkey.patch_socket()
+gevent.monkey.patch_ssl()
 
 from newslynx_core import settings
 from newslynx_core.parsers.serialization import jsonify
