@@ -11,7 +11,7 @@ from hashlib import sha1
 from datetime import datetime
 import gevent 
 import gevent.monkey
-gevent.monkey.patch_all(thread=False)
+gevent.monkey.patch_all()
 
 from newslynx_core import settings
 from newslynx_core.parsers.serialization import jsonify
@@ -56,11 +56,8 @@ class Controller:
 
   def pub(self, task_id, data):
     fp = self._build_fp(task_id)
-    threads = [
-      gevent.spawn(self.s3.put, fp, data),
-      gevent.spawn(self.rdb.publish, self.key, jsonify(data))
-      ]
-    gevent.joinall(threads)
+    self.s3.put( fp, data),
+    self.rdb.publish( self.key, jsonify(data))
 
 def lskeys():
   c = Controller(org_id = "", source_type = "")

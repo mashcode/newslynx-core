@@ -8,7 +8,7 @@ we've done a task, adding this task to our log,
 inserting the output into the respect table,
 and publishing a message to the queue.
 """
-
+from retrying import retry
 import gevent
 from gevent.queue import Queue
 import gevent.monkey
@@ -23,7 +23,6 @@ class SourceInitError(Exception):
 
 class SourceTimeout(Exception):
   pass
-
 
 class Source:
   """
@@ -81,7 +80,8 @@ class Source:
     overwrite
     """
     pass
-
+  
+  @retry
   def parser(self, task_id, item):
     """
     overwrite
@@ -128,12 +128,11 @@ class Source:
       else:
       # if it worked, send off data
         if output:
-          with gevent.Timeout(self.timeout, SourceTimeout) as to:
-	    # push to redisquue / sql / s3
-            self._table.insert(output)
-            self._mailman(task_id, output)
-            # sleep
-            gevent.sleep(0.001)
+          # push to redisquue / sql / s3
+          self._table.insert(output)
+          self._mailman(task_id, output)
+          # sleep
+          gevent.sleep(0)
 
   def _mailman(self, task_id, output):
 
