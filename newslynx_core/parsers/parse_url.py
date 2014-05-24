@@ -63,6 +63,7 @@ re_abs_url = re.compile(r"""
 # remove https / http / .html from url for slugging / hashing 
 re_http = re.compile(r'^http(s)?')
 re_html = re.compile(r'(index\.)?htm(l)?$')
+re_index_html = re.compile(r'index\.htm(l)?$')
 re_www = re.compile(r'^www\.')
 re_slug = re.compile(r'[^\sA-Za-z]+')
 re_slug_end = re.compile(r'(^[\-]+)|([\-]+)$')
@@ -134,6 +135,9 @@ def prepare_url(url, source_url=None):
   except ValueError, e:
     print 'url %s failed on err %s' % (url, str(e))
     proper_url = u''
+
+  # remove index.html
+  proper_url = re_index_html.sub('', proper_url)
 
   # remove trailing slashes
   if proper_url.endswith('/'):
@@ -291,12 +295,12 @@ def valid_url(
   """
   # If we are testing this method in the testing suite, we actually
   # need to preprocess the url like we do in the article's constructor!
-  if test:
-    url = prepare_url(url)
+  # if test:
+  #   url = prepare_url(url)
 
-  # check global regex first
-  if settings.KNOWN_ARTICLE_REGEX.search(url):
-    return True
+  # # check global regex first
+  # if settings.KNOWN_ARTICLE_REGEX.search(url):
+  #   return True
 
   # if we pass in custom regexes, check those first
   if bad_regex:

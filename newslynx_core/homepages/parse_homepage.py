@@ -51,7 +51,6 @@ class HomepageParser(Source):
     self.homepage = kwargs.get('homepage')
     self.bucket_pixels = kwargs.get('bucket_pixels', settings.HOMEPAGE_BUCKET_PIXELS)
     self.browser = webdriver.PhantomJS()
-    self.browser.get(self.homepage)
 
   def readystate_complete(self):
     # AFAICT Selenium offers no better way to wait for the document to be loaded,
@@ -87,15 +86,12 @@ class HomepageParser(Source):
     except Exception as e:
       pass
 
-def get_url(link):
-  try:
+  def get_url(self, link):
     url = link.get_attribute("href")
-
-  except StaleElementReferenceException:
-    return ''
-
-  else:
-    return prepare_url(url)
+    if url:
+      return prepare_url(url)
+    else:
+      return ''
 
   def get_img_data(self, link):
     try:
@@ -116,66 +112,83 @@ def get_url(link):
     else:
       return dict(has_img = 0)
 
-def get_font_size(self, link):
-  return int(link.value_of_css_property('font-size')[:-2])
+  def get_font_size(self, link):
+    return int(link.value_of_css_property('font-size')[:-2])
 
-# TODO
-def get_bucket_data(self, x, y):
-  return {}
+  def bucket_coord(self, c):
+    return int(c / self.bucket_pixels) + 1
 
-def task_id(self, link):
-  url = self.get_url(link)
-  return "%s-%s" % (url, datetime.now().stfrtime('%s'))
-
-def get_links(self):
-  return self.browser.find_elements_by_tag_name('a')
-
-def poller(self):
-  # extract links 
-  self.browser.get(self.homepage)
-  urls = self.get_links()
-  print urls, ' !!!!'
-  
-def parser(self, task_id, link):
-  
-  url = self.get_url(link)               
-  print link.__repr__
-  # continue under specified conditions
-  if url and valid_url(url):
-    
-    # get coordinates
-    pos_x = int(link.location['x'])
-    pos_y = int(link.location['y'])
-
-    if pos_x > 0 and pos_y > 0:
-      # okay, let's record it
-      # parse link text
-      
-      # get bucket:
-      bucket_dict = self.get_bucket_data(pos_x, pos_y)
-
-      # get image
-      img_dict = get_image_for_a_link(link)
-
-      data = {
-        'homepage' : self.homepage,
-        'org_id': self.org_id,
-        'datetime': datetime.now(),
-        'headline' :  link.text.strip(),
-        'url': url,
-        'font_size' : self.get_font_size(link),
-        'pos_x' : pos_x,
-        'pos_y' : pos_y
+  # TODO
+  def get_bucket_data(self, x, y):
+    if x == 0 and y == 0:
+      return {}
+    else:
+      x_b = self.bucket_coord(x)
+      y_b = self.bucket_coord(y)
+      return {
+        'x_bucket': x_b,
+        'y_bucket': y_b,
+        'bucket': (x_b + y_b) - 1
       }
 
-      data = dict(
-        data.items() + 
-        link_dict.items() + 
-        bucket_dict.items()
-        )          
-      print data
-      # return data
-      return data
+  def valid_link(self, link):
+    # only get visible links
+    if not link.is_displayed():
+      return False
+
+    # only get valid links
+    url = self.get_url(link)
+    if valid_url(url):
+      return True
+
+    # default to invalid
+    return False
+
+  def task_id(self, link):
+    url = self.get_url(link)
+    return "%s-%s" % (url, datetime.now().strftime('%s'))
+
+  def poller(self):
+    # extract links 
+    self.get_homepage_safely()
+    links = self.browser.find_elements_by_tag_name('a')
+    for link in links:
+      if self.valid_link(link):
+        yield link
+  
+  def parser(self, task_id, link):
+    
+    url = self.get_url(link)          
+
+    # get coordinates
+    x = int(link.location['x'])
+    y = int(link.location['y'])
+
+    bucket_dict = self.get_bucket_data(x, y)
+
+    # get image
+    img_dict = self.get_img_data(link)
+
+    link_dict = {
+      'homepage' : self.homepage,
+      'homepage_id' : task_id,
+      'org_id': self.org_id,
+      'datetime': datetime.now(),
+      'headline' :  link.text.strip(),
+      'url': url,
+      'font_size' : self.get_font_size(link),
+      'x' : x,
+      'y' : y
+    }
+
+    data = dict(
+      link_dict.items() + 
+      img_dict.items() + 
+      bucket_dict.items()
+      )          
+    print data
+    # return data
+    return data
 
   def messenger(self, output):
     return {
@@ -183,8 +196,7 @@ def parser(self, task_id, link):
     }
 
 if __name__ == '__main__':
-  hp = HomepageParser(org_id = 'propublica', homepage = 'http://www.nytimes.c/')
+  hp = HomepageParser(org_id = 'propublica', homepage = 'http://www.propublica.org/')
   hp.run()
-  hp.browser.close()
 
 

@@ -30,7 +30,7 @@ TWT_ACCESS_SECRET = os.getenv('NEWSLYNX_TWT_ACCESS_SECRET')
 TWT_DATE_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
 
 #
-HOMEPAGE_BUCKET_PIXELS = 300
+HOMEPAGE_BUCKET_PIXELS = 50
 
 # SET EXPIRATION
 SET_EXPIRES = timedelta(days=30)
@@ -47,7 +47,6 @@ LOCAL_TZ = 'EST'
 
 # article regexes we already know
 KNOWN_ARTICLE_REGEX = re.compile(r"""
-  (.*\.nytimes\.com/(.*/)?[0-9]+/[0-9]+/[0-9]+/.*)|
   (.*propublica.org/[a-z]+/[a-z0-9/-]+)|
 """, re.VERBOSE)
 
