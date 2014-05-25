@@ -14,7 +14,7 @@ def listen(ctx):
 
 @listen.command()
 @click.option('--channels', default='public:twitter', help='A list of channels to subscribe to')
-def listen(channels):
+def stream(channels):
   l = Listener(channels.split(','))
   l.run()
 

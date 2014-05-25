@@ -7,8 +7,7 @@ ORGANIZATIONS = [
     'twitter_searches': [
       'publicintegrity org',
       'publicintegrity',
-      'publici',
-      'hello'
+      'publici'
     ],
     'homepage': 'http://www.publicintegrity.org/',
     'domain': 'publicintegrity.org',
