@@ -28,6 +28,7 @@ class Controller:
   def __init__(self, **kwargs):
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
+    self.hash_key = kwargs.get('hash_key', None)
     self.key = self._build_key()
     self.rdb = rdb
     self.s3 = S3()
@@ -35,7 +36,10 @@ class Controller:
     self.expires = settings.SET_EXPIRES
     
   def _build_key(self):
-    return "%s/%s" % (self.org_id, self.source_type)
+    if not self.hash_key:
+      return "%s/%s" % (self.org_id, self.source_type)
+    else:
+      return "%s/%s" % (self.hash_key, self.source_type)
 
   def _build_fp(self, task_id):
     task_hash = sha1(task_id).hexdigest()

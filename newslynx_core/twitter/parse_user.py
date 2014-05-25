@@ -17,9 +17,10 @@ class TwitterUserParser(Source):
         )
     Source.__init__(
       self,
-      org_id = kwargs.get('org_id', 'public'),
-      source_type = 'twitter'
-      )
+        org_id = kwargs.get('org_id', 'public'),
+        source_type = 'twitter',
+        hask_key = 'public'
+      )    
     self.screen_name = kwargs.get('screen_name')
     self.limit = kwargs.get('limit', 200)
     self.api = connect()
