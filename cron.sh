@@ -5,5 +5,5 @@
 16,31,46 * * * * /usr/local/bin/nlc twitter_lists
 20,35,50 * * * * /usr/local/bin/nlc homepages
 24,39,54 * * * * /usr/local/bin/nlc facebook_page_stats
-28,43,58 * * * * /usr/local/bin/nlc facebook_pagesrectory
+28,43,58 * * * * /usr/local/bin/nlc facebook_pages
 
