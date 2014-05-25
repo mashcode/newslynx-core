@@ -32,7 +32,7 @@ TWT_DATE_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
 # AWS API
 AWS_ACCESS_KEY_ID = os.getenv('NEWSLYNX_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('NEWSLYNX_AWS_SECRET_ACCESS_KEY')
-AWS_S3_STOR = 's3://newslynx-core/stor'
+AWS_S3_STOR = 's3://newslynx-core/develop'
 
 HOMEPAGE_BUCKET_PIXELS = 50
 

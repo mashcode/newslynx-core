@@ -2,6 +2,7 @@ import click
 import os
 from newslynx_core import tasks
 from newslynx_core.listener import Listener
+from newslynx_core.controller import lskeys 
 
 # groups
 @click.group()
@@ -14,7 +15,10 @@ def listen(ctx):
 
 @listen.command()
 @click.option('--channels', default='public:twitter', help='A list of channels to subscribe to')
-def stream(channels):
+@click.option('--ls', default=True, help="list all channels")
+def stream(channels, ls):
+  if ls:
+    pprint(lskeys())
   l = Listener(channels.split(','))
   l.run()
 
