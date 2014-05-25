@@ -118,7 +118,7 @@ def ensure_schema():
   facebook_page_stats.create_column('page_stats_id',String)
   facebook_page_stats.create_column('page_id',String)
   facebook_page_stats.create_column('page_talking_about_count',Numeric)
-  facebook_page_stats.create_column('page_likes',String)
+  facebook_page_stats.create_column('page_likes', Numeric)
   facebook_page_stats.create_column('datetime',DateTime)
   # TODO Explicit definitions for stats
   

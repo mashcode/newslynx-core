@@ -37,8 +37,8 @@ class FacebookPageStatsParser(Source):
     data['org_id'] = self.org_id
     data['page_stats_id'] = task_id
     data['page_id'] = self.page_id
-    data['page_talking_about_count'] = item['talking_about_count']
-    data['page_likes'] = item['likes']
+    data['page_talking_about_count'] = int(item['talking_about_count'])
+    data['page_likes'] = int(item['likes'])
     data['datetime'] = datetime.now()
 
     return data 
