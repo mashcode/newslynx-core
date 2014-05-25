@@ -537,11 +537,11 @@ def unshorten_url(short_url, max_attempts= settings.MAX_UNSHORTEN_ATTEMPTS):
       if attempts == max_attempts:
         break
   if url and not is_short_url(url):
-    print "unshortened %s from %s" % (url, short_url)
+    # aprint "unshortened %s from %s" % (url, short_url)
     rdb.hset('short_urls', short_url, url)
     return url
   else:
-    print "unable to unshorten %s" % (short_url)
+    # print "unable to unshorten %s" % (short_url)
     return short_url
 
 def unshorten(url):
