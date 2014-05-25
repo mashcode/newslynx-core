@@ -11,9 +11,9 @@ Strategy:
 * x,y coordinates
 * whether the link has an image
 * extract the headline
-* divide the page up into 300x300 grids, and assign each link to a grid id,
+* divide the page up into grids and assign each link to a grid id,
 * which moves from top left to bottom right.
-* if there is more than on instance of a link in a grid, register it as a single
+* if there is more than one instance of a link in a grid, register it as a single
 * link, and retain it's image, headline, and average position among all links.
 * return a list of json.
 """
@@ -130,7 +130,10 @@ class HomepageParser(Source):
 
   def valid_link(self, link):
     # only get visible links
-    if not link.is_displayed():
+    try:
+      if not link.is_displayed():
+        return False
+    except StaleElementReferenceException:
       return False
 
     # only get valid links
