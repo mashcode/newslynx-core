@@ -1,5 +1,6 @@
 import click
 import os
+from pprint import pprint
 from newslynx_core import tasks
 from newslynx_core.listener import Listener
 from newslynx_core.controller import lskeys 
@@ -15,12 +16,13 @@ def listen(ctx):
 
 @listen.command()
 @click.option('--channels', default='public:twitter', help='A list of channels to subscribe to')
-@click.option('--ls', default=True, help="list all channels")
+@click.option('--ls/--no-ls', default=False, help="list all channels")
 def stream(channels, ls):
   if ls:
-    pprint(lskeys())
-  l = Listener(channels.split(','))
-  l.run()
+    click.echo(pprint(lskeys()))
+  else:
+    l = Listener(channels.split(','))
+    l.run()
 
 # poll commands:
 @poll.command()

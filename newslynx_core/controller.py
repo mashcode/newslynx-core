@@ -35,7 +35,7 @@ class Controller:
     self.expires = settings.SET_EXPIRES
     
   def _build_key(self):
-    return "%s:%s" % (self.org_id, self.source_type)
+    return "%s/%s" % (self.org_id, self.source_type)
 
   def _build_fp(self, task_id):
     task_hash = sha1(task_id).hexdigest()
@@ -68,7 +68,8 @@ def lskeys():
 def flushall():
   c = Controller(org_id = "", source_type = "")
   for k in c.rdb.keys():
-    c.rdb.delete(k)
+    if k!="short_urls":
+      c.rdb.delete(k)
 
 if __name__ == '__main__':
   if len(sys.argv) > 0:

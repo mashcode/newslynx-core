@@ -157,35 +157,6 @@ def ensure_schema():
   #     continue
 
 
-  # create histogram function
-  psql_histogram  = """
-  CREATE OR REPLACE FUNCTION hist_sfunc (state INTEGER[], val REAL, min REAL, max REAL, nbuckets INTEGER) RETURNS INTEGER[] AS $$
-  DECLARE
-    bucket INTEGER;
-    i INTEGER;
-  BEGIN
-    bucket := width_bucket(val, min, max, nbuckets - 1) - 1;
-   
-    IF state[0] IS NULL THEN
-      FOR i IN SELECT * FROM generate_series(0, nbuckets - 1) LOOP
-        state[i] := 0;
-      END LOOP;
-    END IF;
-   
-    state[bucket] = state[bucket] + 1;
-   
-    RETURN state;
-  END;
-  $$ LANGUAGE plpgsql IMMUTABLE;
-   
-  DROP AGGREGATE IF EXISTS histogram (REAL, REAL, REAL, INTEGER);
-  CREATE AGGREGATE histogram (REAL, REAL, REAL, INTEGER) (
-         SFUNC = hist_sfunc,
-         STYPE = INTEGER[]
-  );
-  """
-  db.query(psql_histogram)
-
   psql_median = """
   CREATE OR REPLACE FUNCTION _final_median(numeric[])
      RETURNS numeric AS

@@ -13,6 +13,7 @@ from hashlib import sha1
 import httplib
 import requests
 import httplib
+
 from retrying import retry, RetryError
 from urlparse import (
   urlparse, urljoin, urlsplit, urlunsplit, parse_qs
@@ -24,6 +25,7 @@ from newslynx_core.parsers.parse_re import (
   )
 
 from newslynx_core import settings
+from newslynx_core.controller import rdb
 
 MAX_FILE_MEMO = 20000
 
@@ -482,7 +484,22 @@ re_short_domains = re.compile(r"""
   (^feeds\.propublica\.org$)|
   (^ckbe\.at$)|
   (^polti\.co$)|
-  (^pocket\.co$)
+  (^pocket\.co$)|
+  (^n\.pr$)|
+  (^washpo\.st$)|
+  (^nyti\.ms$)|
+  (^wrd\.com$)|
+  (^nyp\.st$)|
+  (^apne\.ws$)|
+  (^alj\.am$)|
+  (^sbn\.to$)|
+  (^lat.ms$)|
+  (^fw\.to$)|
+  (^abcn\.ws$)|
+  (^ampr\.gs$)|
+  (^cl\.ly$)|
+  (^thkpr\.gs$)|
+  (^huff\.to$)
   """, flags=re.VERBOSE)
 
 def is_short_url(url, regex=None, test="any"):
@@ -507,28 +524,53 @@ def is_short_url(url, regex=None, test="any"):
   else:
     return False
 
-@retry(retry_on_result=is_short_url, stop_max_delay=settings.UNSHORTEN_TIMEOUT)
-def unshorten_url(url):
-  try:
-    r = requests.get(url)
-    return r.url
-  except:
+def unshorten_url(short_url, max_attempts= settings.MAX_UNSHORTEN_ATTEMPTS):
+  url = None
+  if rdb.hexists('short_urls', short_url):
+    url = rdb.hget('short_urls', short_url)
+  else:
+    url = unshorten(short_url)
+    attempts = 1
+    while not is_short_url(url):
+      url = unshorten(url)
+      attempts +=1
+      if attempts == max_attempts:
+        break
+  if url and not is_short_url(url):
+    print "unshortened %s from %s" % (url, short_url)
+    rdb.hset('short_urls', short_url, url)
+    return url
+  else:
+    print "unable to unshorten %s" % (short_url)
+    return short_url
+
+def unshorten(url):
+  url = get_location(url)
+  if is_short_url(url):
+    url = long_url(url)
+  if is_short_url(url):
+    url = requests.get(url).url
+  return url 
+
+def get_location(url):
+  parsed = urlparse(url)
+  h = httplib.HTTPConnection(parsed.netloc)
+  h.request('HEAD', parsed.path)
+  response = h.getresponse()
+  if response.status/100 == 3 and response.getheader('Location'):
+    return response.getheader('Location')
+  else:
     return url
 
-# # fast, recursive url shortener.
-# @retry(stop_max_delay=5000)
-# def unshorten_url(url):
-#   parsed = urlparse(url)
-#   h = httplib.HTTPConnection(parsed.netloc)
-#   h.request('HEAD', parsed.path)
-#   response = h.getresponse()
-#   try:
-#     if response.status/100 == 3 and response.getheader('Location'):
-#       return unshorten_url(response.getheader('Location')) # changed to process chains of short urls
-#     else:
-#       return url
-#   except RetryError:
-#     return url
+def long_url(url):
+  r = requests.get(
+        'http://api.longurl.org/v2/expand',
+        params = {
+          'url'    :  url,
+          'format' : 'json'
+        }
+      )
+  return r.json().get('long-url', url)
 
 # def unshorten_url(url, regex=None, test="any"):
 #   """
