@@ -33,7 +33,7 @@ class FacebookPageParser(Source):
     return post['id']
 
   def poller(self):
-    page = self.api.get(self.page_id + '/posts', page=False, retry=5, limit=5)
+    page = self.api.get(self.page_id + '/posts', page=False, retry=5, limit=self.limit)
     for post in reversed(page['data']):
       yield post
 

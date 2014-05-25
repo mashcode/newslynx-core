@@ -1,10 +1,9 @@
 #!/bin/sh
-*/5 * * * * * nlc galerts
-4,34 * * * * * nlc articles
-8,38 * * * * * * nlc twitter_user_stats
-12,42 * * * * * * nlc twitter_users
-16,46 * * * * * nlc twitter_lists
-20,50 * * * * * nlc homepages
-24,54 * * * * * nlc facebook_page_stats
-28,58 * * * * * nlc facebook_pages
-@reboot /usr/local/bin/forever start -c "nlc twitter_stream"
+*/5 * * * * /usr/local/bin/nlc articles
+8,23,38 * * * * /usr/local/bin/nlc twitter_user_stats
+12,27,42 * * * * /usr/local/bin/nlc twitter_users
+16,31,46 * * * * /usr/local/bin/nlc twitter_lists
+20,35,50 * * * * /usr/local/bin/nlc homepages
+24,39,54 * * * * /usr/local/bin/nlc facebook_page_stats
+28,43,58 * * * * /usr/local/bin/nlc facebook_pagesrectory
+
