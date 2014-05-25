@@ -42,7 +42,7 @@ def query(q):
   return query_response(q)
 
 if __name__ == '__main__':
-  port = int(os.environ.get("PORT", 5000))
+  port = int(80)
   http_server = WSGIServer(('0.0.0.0', port), app)
   http_server.serve_forever()
 
