@@ -51,7 +51,9 @@ class Source:
     self.source_type = kwargs.get('source_type')
     self.num_workers = kwargs.get('num_workers', settings.GEVENT_QUEUE_SIZE)
     self.timeout = kwargs.get('timeout', 20)
-
+    # store records in ram and write at the end for better performance
+    self._stor = []
+    
     # access datastores
     self._table = db[self.source_type]
     self._controller = Controller(
@@ -91,6 +93,9 @@ class Source:
     overwrite
     """
     pass
+  
+  def messenger(self, output):
+    return output
 
   def _capitalist(self):
     """
@@ -125,20 +130,15 @@ class Source:
 
       # if it worked, send off data
       if output:
-        # push to redisquue / sql / s3
-        self._table.insert(output)
-        self._mailman(task_id, output)
+        # push to redisquue / sql / s
+        self._stor.append(output)
+        self._controller.pub(self.messenger(output))
+        self._controller.cache(task_id, output)
+        
         # sleep
-        gevent.sleep(0.1)
-
-  def _mailman(self, task_id, output):
-
-    """
-    Don't kill the messenger.
-    """
-    self._controller.pub(task_id, output)
-
-  def _society(self):
+        gevent.sleep(random_sleep())
+  
+  def _parallelize(self):
     """
     It's the system man
     """
@@ -151,11 +151,16 @@ class Source:
         for w in xrange(self.num_workers)
     ])
 
+  def _dump(self):
+    # dump records at the end 
+    self._table.insert_many(self._stor)    
+     
   def run(self):
     """
     Run
     """
-    self._society()
+    self._parallelize()
+    self._dump()
     
   def debug(self):
     # generate entities
