@@ -143,7 +143,7 @@ ORGANIZATIONS = [
       'http://ny.chalkbeat.org/feed/'
       ],
     'galerts': [
-      'http://www.google.com/alerts/feeds/14752688329844321840/4874425503898649357'
+      'http://www.google.com/alerts/feeds/14752688329844321840/539908507654596789'
     ],
     'twitter_accounts': [
       'chalkbeat',

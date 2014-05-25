@@ -33,7 +33,8 @@ class GAlertParser(Source):
     Source.__init__(
       self, 
       org_id = kwargs.get('org_id'),
-      source_type = 'galerts'
+      source_type = 'galerts',
+      hash_key = 'public'
     )
     self.feed_url = kwargs.get('feed_url')
     self.domain = kwargs.get('domain')

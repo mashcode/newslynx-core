@@ -29,30 +29,31 @@ class Controller:
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.hash_key = kwargs.get('hash_key', None)
-    self.key = self._build_key()
+    self.key, self.hash_key = self._build_keys()
     self.rdb = rdb
     self.s3 = S3()
     self.date_slug = datetime.now().date().strftime('%Y/%m/%d')
     self.expires = settings.SET_EXPIRES
     
-  def _build_key(self):
-    if not self.hash_key:
-      return "%s/%s" % (self.org_id, self.source_type)
-    else:
-      return "%s/%s" % (self.hash_key, self.source_type)
+  def _build_keys(self):
+    key = "%s/%s" % (self.org_id, self.source_type)
+    hash_key = key 
+    if self.hash_key:
+      hashkey = "%s/%s" % (self.hash_key, self.source_type)
+    return key, hash_key
 
   def _build_fp(self, task_id):
     task_hash = sha1(task_id).hexdigest()
-    return os.path.join(self.org_id, self.source_type, self.date_slug, task_hash)
+    return os.path.join(self.key, self.date_slug, task_hash)
 
   def _now(self):
     return float(current_timestamp())
 
   def exists(self, task_id):
-    return self.rdb.sismember(self.key, task_id)
+    return self.rdb.sismember(self.hash_key, task_id)
 
   def add(self, task_id):
-    self.rdb.sadd(self.key, task_id)
+    self.rdb.sadd(self.hash_key, task_id)
     # TODO: get sorted sets working
     # self.rdb.zadd(self.key, self._now(), task_id) 
 
