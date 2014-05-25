@@ -52,9 +52,11 @@ class Controller:
     # TODO: get sorted sets working
     # self.rdb.zadd(self.key, self._now(), task_id) 
 
-  def pub(self, task_id, data):
+  def cache(self, task_id, data):
     fp = self._build_fp(task_id)
     self.s3.put(fp, data)
+
+  def pub(self, data):
     self.rdb.publish(self.key, jsonify(data))
 
 def lskeys():
