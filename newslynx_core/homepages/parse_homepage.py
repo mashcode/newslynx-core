@@ -187,11 +187,6 @@ class HomepageParser(Source):
     # return data
     return data
 
-  def messenger(self, output):
-    return {
-      'homepage_id' : output['homepage_id']
-    }
-
 if __name__ == '__main__':
   hp = HomepageParser(org_id = 'propublica', homepage = 'http://www.propublica.org/')
   hp.run()

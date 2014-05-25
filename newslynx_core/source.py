@@ -92,9 +92,6 @@ class Source:
     """
     pass
 
-  def messenger(self, output):
-    pass
-
   def _capitalist(self):
     """
     Owns the means of production

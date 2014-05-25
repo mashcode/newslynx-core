@@ -49,11 +49,6 @@ class TwitterListParser(Source):
     data['org_id'] = self.org_id
     return data
 
-  def messenger(self, output):
-    return {
-      'twitter_id': output['twitter_id']
-    }
-
 if __name__ == '__main__':
   tlp = TwitterListParser(list_owner = 'cspan', list_name = 'members-of-congress')
   tlp.run()

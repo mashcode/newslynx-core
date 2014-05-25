@@ -296,11 +296,6 @@ class FeedParser(Source):
       #print article.to_json()
       return article.to_dict()
 
-  def messenger(self, output):
-    return {
-      'url': output['url'],
-    }
-
 if __name__ == '__main__':
   feed_url = 'http://feeds.feedburner.com/publici_rss'
   fp = FeedParser(feed_url = feed_url, org_id = 'publicintegrity', domain = 'http://www.publicintegrity.org/')

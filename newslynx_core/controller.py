@@ -22,23 +22,20 @@ import gevent.monkey
 gevent.monkey.patch_all()
 
 #instaniate a connection pool
-pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+rdb = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class Controller:
   def __init__(self, **kwargs):
     self.org_id = kwargs.get('org_id')
     self.source_type = kwargs.get('source_type')
     self.key = self._build_key()
-    self.rdb = redis.StrictRedis(connection_pool = pool)
+    self.rdb = rdb
     self.s3 = S3()
     self.date_slug = datetime.now().date().strftime('%Y/%m/%d')
     self.expires = settings.SET_EXPIRES
     
   def _build_key(self):
     return "%s:%s" % (self.org_id, self.source_type)
-
-  def _date_slug(self):
-    return 
 
   def _build_fp(self, task_id):
     task_hash = sha1(task_id).hexdigest()
@@ -56,10 +53,9 @@ class Controller:
     # self.rdb.zadd(self.key, self._now(), task_id) 
 
   def pub(self, task_id, data):
-    pass
     fp = self._build_fp(task_id)
-    self.s3.put(fp, data),
-    self.rdb.publish( self.key, jsonify(data))
+    self.s3.put(fp, data)
+    self.rdb.publish(self.key, jsonify(data))
 
 def lskeys():
   c = Controller(org_id = "", source_type = "")

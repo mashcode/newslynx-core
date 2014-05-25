@@ -1,7 +1,7 @@
 import click
 import os
 from newslynx_core import tasks
-
+from newslynx_core.listener import Listener
 
 # groups
 @click.group()
@@ -9,19 +9,14 @@ def poll(ctx):
     pass
 
 @click.group()
-def parse(ctx):
-    pass 
-
-@click.group()
-def query(ctx):
-    pass 
-
 def listen(ctx):
     pass
 
-@click.group()
-def manage(ctx):
-    pass 
+@listen.command()
+@click.option('--channels', default='public:twitter', help='A list of channels to subscribe to')
+def listen(channels):
+  l = Listener(channels.split(','))
+  l.run()
 
 # poll commands:
 @poll.command()
@@ -64,7 +59,7 @@ def twitter_user_stats():
 def twitter_users():
   tasks.twitter_users().run()
 
-cli = click.CommandCollection(sources=[poll])
+cli = click.CommandCollection(sources=[poll, listen])
 
 if __name__ == '__main__':
     cli()

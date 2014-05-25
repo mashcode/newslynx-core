@@ -42,10 +42,6 @@ class TwitterUserParser(Source):
   def parser(self, task_id, tweet):
     return self.twp.parse(tweet)
 
-  def messenger(self, output):
-    return {
-      'twitter_id': output['twitter_id']
-    }
 
 if __name__ == '__main__':
   tlp = TwitterUserParser(screen_name = 'cspan')
