@@ -553,13 +553,19 @@ def unshorten(url):
   return url 
 
 def get_location(url):
-  parsed = urlparse(url)
-  h = httplib.HTTPConnection(parsed.netloc)
-  h.request('HEAD', parsed.path)
-  response = h.getresponse()
-  if response.status/100 == 3 and response.getheader('Location'):
-    return response.getheader('Location')
-  else:
+  """
+  most efficient yet error prone method.
+  """
+  try:
+    parsed = urlparse(url)
+    h = httplib.HTTPConnection(parsed.netloc)
+    h.request('HEAD', parsed.path)
+    response = h.getresponse()
+    if response.status/100 == 3 and response.getheader('Location'):
+      return response.getheader('Location')
+    else:
+      return url
+  except:
     return url
 
 def long_url(url):
