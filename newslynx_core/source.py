@@ -58,7 +58,7 @@ class Source:
     self._table = db[self.source_type]
     self._controller = Controller(
       org_id = kwargs.get('org_id'),
-      source_type = kwargs.get('source_type')
+      source_type = kwargs.get('source_type'),
       hash_key = kwargs.get('hash_key', None)
       )
 
