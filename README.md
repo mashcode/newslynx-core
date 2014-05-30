@@ -37,7 +37,7 @@ pip install boilerpipe
   * For each source, inherit this class and overwrite `.task_id()`, `poller`, `parser`, and `messenger`.
   * this process will run on **gevent** queues, checking for duplicates via `Controller`,
     and inserting new records into `db`
- - [ ] `newlynx_core.poll.Poll`
+ - [x] `newlynx_core.poll.Poll`
   * An abstract class for Polling multiple sources
   * Uses `Contoller` to determine what to poll when.
  - [x] `newslynx_core.feeds.parse_feed.FeedParser`
