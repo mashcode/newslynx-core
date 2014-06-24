@@ -64,7 +64,7 @@ Exception KeyError: KeyError(4322285680,) in <module 'threading' from '/System/L
 ```
 ## Framework:
 
-Data will be polled from various sources using this basic straegy:
+Data will be polled from various sources using this basic strategy:
 
 1. Store unique identifiers of every thing we poll for each
    organization, including these source types:
